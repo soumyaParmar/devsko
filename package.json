@@ -16,6 +16,9 @@
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
     "@radix-ui/react-icons": "^1.3.0",
+    "@react-three/drei": "^9.109.5",
+    "@react-three/fiber": "^8.17.7",
+    "@types/three": "^0.168.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.439.0",
@@ -26,7 +29,9 @@
     "react-webcam": "^7.2.0",
     "regenerator-runtime": "^0.14.1",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "three": "^0.168.0",
+    "three-stdlib": "^2.8.12"
   },
   "devDependencies": {
     "@types/node": "^20",

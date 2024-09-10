@@ -7,6 +7,9 @@ import dynamic from "next/dynamic";
 import { questions } from "@/utils/Questions/Questions";
 import { ChatType } from "@/utils/Interfaces/Interview/interview";
 import ChatBox from "@/components/Chats/ChatBox";
+import { Canvas } from "@react-three/fiber";
+import { Avatar } from "@/components/Avatar/Avatar";
+import { Environment, OrbitControls } from "@react-three/drei";
 
 const VideoRecorder = dynamic(
   () => import("@/components/VideoRecoeder/VideoRecorder"),
@@ -69,7 +72,34 @@ const Interview = () => {
   //   }
 
   return (
-    <>
+    <div className="flex">
+      <div>
+      <div className="flex pt-[50px] pl-[50px]">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Canvas
+          camera={{ position: [0, 2, 10], fov: 50 }}
+          style={{
+            height: "375px",
+            backgroundColor: "whitesmoke",
+            width: "400px",
+          }}
+        >
+          <OrbitControls />
+          <Avatar
+            position={[0, -1.5, 9]}
+            scale={2}
+            text={text ? questions[response] : ""}
+          />
+          <Environment preset="sunset" />
+        </Canvas>
+        <span style={{ padding: "20px 0 0 0" }}>Interviewer</span>
+      </div>
       {response !== questions.length - 1 ? (
         <div>
           <VideoRecorder
@@ -91,9 +121,11 @@ const Interview = () => {
       ) : (
         <h1>thank you</h1>
       )}
+      </div>
       <p>{doneResponse}</p>
-      <ChatBox chats={allChat}/>
-    </>
+      </div>
+      <ChatBox chats={allChat} />
+    </div>
   );
 };
 
