@@ -1,0 +1,3 @@
+interface ScreenType {
+    isExtended?:boolean
+}
