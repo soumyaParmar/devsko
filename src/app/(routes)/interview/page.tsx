@@ -10,6 +10,7 @@ import ChatBox from "@/components/Chats/ChatBox";
 import { Canvas } from "@react-three/fiber";
 import { Avatar } from "@/components/Avatar/Avatar";
 import { Environment, OrbitControls } from "@react-three/drei";
+import WhiteBoard from "@/common/WhiteBoard/WhiteBoard";
 
 const VideoRecorder = dynamic(
   () => import("@/components/VideoRecoeder/VideoRecorder"),
@@ -26,6 +27,7 @@ const Interview = () => {
   const [speechDone, setSpeechDone] = useState<boolean>(false);
   const [unsupported, setUnsupported] = useState<boolean>(false);
   const [disable, setDisable] = useState<boolean>(false);
+  const [openWhiteBoard, setOpenWhiteBoard] = useState<boolean>(false);
 
   useEffect(() => {
     if (done) {
@@ -59,6 +61,10 @@ const Interview = () => {
     }
   };
 
+  const handleWhiteBoard = () => {
+    setOpenWhiteBoard(!openWhiteBoard);
+  };
+
   if (unsupported) {
     return (
       <span style={{ fontSize: "20px" }}>
@@ -74,57 +80,63 @@ const Interview = () => {
   return (
     <div className="flex">
       <div>
-      <div className="flex pt-[50px] pl-[50px]">
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Canvas
-          camera={{ position: [0, 2, 10], fov: 50 }}
-          style={{
-            height: "375px",
-            backgroundColor: "whitesmoke",
-            width: "400px",
-          }}
-        >
-          <OrbitControls />
-          <Avatar
-            position={[0, -1.5, 9]}
-            scale={2}
-            text={text ? questions[response] : ""}
-          />
-          <Environment preset="sunset" />
-        </Canvas>
-        <span style={{ padding: "20px 0 0 0" }}>Interviewer</span>
-      </div>
-      {response !== questions.length - 1 ? (
-        <div>
-          <VideoRecorder
-            setDoneResponse={setDoneResponse}
-            setDone={setDone}
-            response={response}
-            setText={setText}
-            next={next}
-            setNext={setNext}
-            nextQuestion={nextQuestion}
-            speechDone={speechDone}
-            setSpeechDone={setSpeechDone}
-            setUnsupported={setUnsupported}
-            setDisable={setDisable}
-            disable={disable}
-            //    handleStartStop={handleStartStop}
-          />
+        <div className="flex pt-[50px] pl-[50px]">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Canvas
+              camera={{ position: [0, 2, 10], fov: 50 }}
+              style={{
+                height: "375px",
+                backgroundColor: "whitesmoke",
+                width: "400px",
+              }}
+            >
+              <OrbitControls />
+              <Avatar
+                position={[0, -1.5, 9]}
+                scale={2}
+                text={text ? questions[response] : ""}
+              />
+              <Environment preset="sunset" />
+            </Canvas>
+            <span style={{ padding: "20px 0 0 0" }}>Interviewer</span>
+          </div>
+          {response !== questions.length - 1 ? (
+            <div>
+              <VideoRecorder
+                setDoneResponse={setDoneResponse}
+                setDone={setDone}
+                response={response}
+                setText={setText}
+                next={next}
+                setNext={setNext}
+                nextQuestion={nextQuestion}
+                speechDone={speechDone}
+                setSpeechDone={setSpeechDone}
+                setUnsupported={setUnsupported}
+                setDisable={setDisable}
+                disable={disable}
+                //    handleStartStop={handleStartStop}
+              />
+            </div>
+          ) : (
+            <h1>thank you</h1>
+          )}
         </div>
-      ) : (
-        <h1>thank you</h1>
-      )}
-      </div>
-      <p>{doneResponse}</p>
+        <p>{doneResponse}</p>
       </div>
       <ChatBox chats={allChat} />
+      <button className="absolute left-5 bottom-5" onClick={handleWhiteBoard}>{!openWhiteBoard ? "Open board" : "Close board"}</button>
+      {openWhiteBoard && (
+        <div className="absolute left-5 bottom-[100px]">
+          <WhiteBoard />
+        </div>
+      )}
     </div>
   );
 };

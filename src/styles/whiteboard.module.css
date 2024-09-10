@@ -1,0 +1,8 @@
+.tools{
+    @apply flex gap-4
+}
+.toolType{
+    @apply pl-2 ml-2;
+    border: 1px solid black;
+    border-radius: 5px;
+}
