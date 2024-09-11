@@ -1,3 +1,3 @@
-interface ScreenType {
+export interface ScreenType {
     isExtended?:boolean
 }

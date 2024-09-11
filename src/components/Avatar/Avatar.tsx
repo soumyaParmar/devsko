@@ -4,8 +4,14 @@ import { SkeletonUtils } from 'three-stdlib'
 import { useGraph } from '@react-three/fiber'
 import * as THREE from 'three'
 
+interface AvatarType {
+  text:string;
+  position: THREE.Vector3Tuple;
+  scale:number;
+}
 
-export function Avatar({ text ,...props }) {
+
+export function Avatar({ text, position , scale }:AvatarType) {
   const { scene } = useGLTF('/66bb0cfe7b7ea426542e5b6d.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
@@ -27,7 +33,7 @@ export function Avatar({ text ,...props }) {
   }, [text])
 
   return (
-    <group {...props} dispose={null}>
+    <group position={position} scale={scale} dispose={null}>
       <primitive object={nodes.Hips} />
       <skinnedMesh
         geometry={(nodes.Wolf3D_Hair as THREE.Mesh).geometry}

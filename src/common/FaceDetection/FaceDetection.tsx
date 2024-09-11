@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Camera } from '@mediapipe/camera_utils';
 import { FaceDetection } from '@mediapipe/face_detection';
 import { useEffect, useRef } from 'react';

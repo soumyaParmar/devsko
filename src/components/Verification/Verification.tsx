@@ -3,10 +3,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import style from "../../styles/Verification.module.css";
 import FaceDetections from "@/common/FaceDetection/FaceDetection";
-import { isChrome } from "@/utils/browsers/Chrome";
-import { isEdge } from "@/utils/browsers/Edge";
-import { isSafari } from "@/utils/browsers/Safari";
+// import { isChrome } from "@/utils/browsers/Chrome";
+// import { isEdge } from "@/utils/browsers/Edge";
+// import { isSafari } from "@/utils/browsers/Safari";
 import { useRouter } from "next/navigation";
+import { ScreenType } from "@/utils/Interfaces/Verification/verification";
+
 
 const Verification = () => {
   const [isExtendedScreen, setIsExtendedScreen] = useState<boolean>(false);
@@ -19,11 +21,15 @@ const Verification = () => {
   const navigate = useRouter();
 
   useEffect(() => {
+    const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent);
+    const isEdge = /Edg/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    
     if ((window.screen as ScreenType).isExtended) {
       setIsExtendedScreen(true);
     }
     getCameraPermission();
-    if (isExtendedScreen && cameraPermission && fullScreen && faces == 1 && browserCheck) {
+    if (!isExtendedScreen && cameraPermission && fullScreen && faces == 1 && browserCheck) {
       setAllPermission(true);
     }
     if(isChrome || isEdge || isSafari){

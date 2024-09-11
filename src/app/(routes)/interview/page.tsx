@@ -11,6 +11,7 @@ import { Canvas } from "@react-three/fiber";
 import { Avatar } from "@/components/Avatar/Avatar";
 import { Environment, OrbitControls } from "@react-three/drei";
 import WhiteBoard from "@/common/WhiteBoard/WhiteBoard";
+import * as THREE from 'three'
 
 const VideoRecorder = dynamic(
   () => import("@/components/VideoRecoeder/VideoRecorder"),
@@ -80,7 +81,7 @@ const Interview = () => {
   return (
     <div className="flex">
       <div>
-        <div className="flex pt-[50px] pl-[50px]">
+        <div className="flex pt-[50px] pl-[50px] gap-2">
           <div
             style={{
               display: "flex",
@@ -98,7 +99,7 @@ const Interview = () => {
             >
               <OrbitControls />
               <Avatar
-                position={[0, -1.5, 9]}
+                position={[0, -1.5, 9] as THREE.Vector3Tuple}
                 scale={2}
                 text={text ? questions[response] : ""}
               />
@@ -131,7 +132,7 @@ const Interview = () => {
         <p>{doneResponse}</p>
       </div>
       <ChatBox chats={allChat} />
-      <button className="absolute left-5 bottom-5" onClick={handleWhiteBoard}>{!openWhiteBoard ? "Open board" : "Close board"}</button>
+      <button className="absolute left-5 bottom-5" onClick={handleWhiteBoard}>{!openWhiteBoard ? "Open white board" : "Close board"}</button>
       {openWhiteBoard && (
         <div className="absolute left-5 bottom-[100px]">
           <WhiteBoard />
