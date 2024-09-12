@@ -1,0 +1,27 @@
+.dash{
+    @apply bg-blue-200 h-full flex justify-center items-center flex-col;
+}
+.dash p{
+    @apply text-4xl font-bold pb-3
+}
+.inner_dash{
+    @apply h-[80%] w-[80%] bg-slate-200 rounded-2xl flex justify-center items-center
+}
+.left_dash{
+    @apply w-1/4 h-[90%] bg-blue-200 m-4 rounded-2xl 
+}
+.right_dash{
+    @apply w-3/4 h-[90%] bg-blue-200 m-4 rounded-2xl flex flex-col;
+}
+.upper{
+    @apply h-1/2 bg-slate-200 m-4 rounded-2xl 
+}
+.lower{
+    @apply h-1/2 bg-slate-200 m-4 rounded-2xl flex justify-evenly items-center 
+}
+.lower_left{
+    @apply h-[80%] w-[50%] bg-blue-200 m-6 rounded-2xl flex items-center justify-center
+}
+.lower_right{
+    @apply h-[80%] w-[50%] bg-blue-200 m-6 rounded-2xl flex items-center justify-center
+}

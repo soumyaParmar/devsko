@@ -18,6 +18,7 @@ const Verification = () => {
   const [allPermission, setAllPermission] = useState<boolean>(false);
   const [faces, setFaces] = useState<number>(0);
   const webcam = useRef<HTMLVideoElement>(null);
+  const videoStreamRef = useRef<MediaStream | null>(null);
   const navigate = useRouter();
 
   useEffect(() => {
@@ -35,6 +36,13 @@ const Verification = () => {
     if(isChrome || isEdge || isSafari){
       setBrowserCheck(true);
     }
+
+    return () => {
+      if (videoStreamRef.current) {
+        videoStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+
   }, [isExtendedScreen, cameraPermission, fullScreen, faces]);
 
   const getCameraPermission = async () => {
@@ -44,6 +52,7 @@ const Verification = () => {
         audio: true,
       });
       if (videoStream.active) {
+        videoStreamRef.current =  videoStream;
         setCameraPermission(true);
         if (webcam.current) {
           webcam.current.srcObject = videoStream;
