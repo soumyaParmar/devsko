@@ -25,7 +25,7 @@ import logEvent from "@/lib/logEventFunc";
 //   { ssr: false }
 // );
 
-export type testStartType = 'yes' | 'no' | 'end' | 'start';
+export type testStartType = "yes" | "no" | "end" | "start";
 
 const Interview = () => {
   const [response, setResponse] = useState<number>(0);
@@ -38,10 +38,11 @@ const Interview = () => {
   const [openWhiteBoard, setOpenWhiteBoard] = useState<boolean>(false);
   const [usersBlankAnswer, setUsersBlankAnswer] = useState<boolean>(false);
   const [testStarted, setTestStarted] = useState<testStartType>();
-  const [openCaption,setOpenCaption] = useState<boolean>(false)
-  const {day,month,year} = getCurrentDate();
-  const [networkErrorPopup, setnetworkErrorPopup] = useState(true);
-  const [mediaDevicesError, setmediaDevicesError] = useState(false);
+  const [openCaption, setOpenCaption] = useState<boolean>(false);
+  const { day, month, year } = getCurrentDate();
+  const [networkErrorPopup, setnetworkErrorPopup] = useState<boolean>(true);
+  const [ mediaDevicesError,setmediaDevicesError] = useState<boolean>(false);
+  const [slowNetwork, setslowNetwork] = useState<boolean>(false);
   let reconnection: number = 0;
   let disconnected: number = 0;
 
@@ -164,10 +165,9 @@ const Interview = () => {
   const checkInternetSpeed = () => {
     if (navigator.connection) {
       const connection = navigator.connection;
-      const slowDownlinkThreshold = 1;
+      const slowDownlinkThreshold = 0.3;
       const slowConnectionTypes: string[] = ["slow-2g", "2g", "3g"];
       const overAllNetworkQuality: string = `Speed: ${connection.downlink}MBPs Type: ${connection.effectiveType}`;
-
       const isSlowDownlink = connection.downlink < slowDownlinkThreshold;
 
       const isSlowEffectiveType = slowConnectionTypes.includes(
@@ -177,8 +177,11 @@ const Interview = () => {
       // logging network spead and type
       logEvent("Network speed anf type", overAllNetworkQuality, new Date());
 
-      if ((isSlowDownlink || isSlowEffectiveType) && networkErrorPopup) {
-        alert("Your internet connection is very slow");
+      if (isSlowDownlink || isSlowEffectiveType) {
+        // alert("Your internet connection is very slow");
+        setslowNetwork(true);
+      } else {
+        setslowNetwork(false);
       }
     } else {
       console.error(
@@ -209,7 +212,7 @@ const Interview = () => {
     if (response < questions.length - 1) {
       setResponse(response + 1);
     } else {
-      setTestStarted("end")
+      setTestStarted("end");
       alert("Thank you for your time. We will get back to you soon.");
     }
   };
@@ -226,10 +229,9 @@ const Interview = () => {
     setTestStarted("no");
   };
 
-  const OpenCaptionBox  = () => {
-    setOpenCaption(!openCaption)
-  }
-
+  const OpenCaptionBox = () => {
+    setOpenCaption(!openCaption);
+  };
 
   if (unsupported) {
     return (
@@ -239,23 +241,23 @@ const Interview = () => {
     );
   }
 
-
-
   return (
     <section className="h-full">
-          {!networkErrorPopup && (
-            <ErrorPopUp
-              errorPopup={!networkErrorPopup}
-              errorMsg="You are currently offline. Please check your internet connection."
-            />
-          )}
+      {!networkErrorPopup && (
+        <ErrorPopUp
+          errorPopup={!networkErrorPopup}
+          errorMsg="You are currently offline. Please check your internet connection."
+        />
+      )}
 
-          {mediaDevicesError && (
-            <ErrorPopUp
-              errorPopup={mediaDevicesError}
-              errorMsg=" Selected Microphone/Camera is not detected. "
-            />
-          )}
+      {mediaDevicesError && (
+            // <ErrorPopUp
+            // errorPopup={mediaDevicesError}
+            // errorMsg=" Selected Microphone/Camera is not detected. "
+            // />
+            <></>
+            )}
+
       <div className={style.top}>
         <div className={style.logo}>DevSko</div>
         <div className={style.top_middle}>
@@ -267,13 +269,18 @@ const Interview = () => {
         <div className={style.right_btns}>
           <span>{"00:00:00"}</span>
           <button
-          className={testStarted == "yes"? style.end_btn : style.start_btn}
+            className={testStarted == "yes" ? style.end_btn : style.start_btn}
             onClick={testStarted == "yes" ? handleTestEnd : handleTestStart}
           >
             {testStarted == "yes" ? "Terminate" : "Start"}
           </button>
         </div>
       </div>
+      {slowNetwork && (
+        <p className="text-center text-red-600 text-[1rem]">
+          Your internet speed is slow
+        </p>
+      )}
       <div className={style.mid}>
         <div className={style.candidate}>
           <CandidateScreen
@@ -303,7 +310,7 @@ const Interview = () => {
                 borderRadius: "6px",
               }}
             >
-              <OrbitControls />
+              <OrbitControls enableRotate={false} />
               <Avatar
                 position={[0, -1.5, 9] as THREE.Vector3Tuple}
                 scale={2}
@@ -335,7 +342,7 @@ const Interview = () => {
       )}
       {openCaption && (
         <div className="absolute z-20 h-[300px] w-[500px] left-1/2 bottom-[70px]">
-          <CaptionBox caption={doneResponse}/>
+          <CaptionBox caption={doneResponse} />
         </div>
       )}
       <div>{doneResponse}</div>

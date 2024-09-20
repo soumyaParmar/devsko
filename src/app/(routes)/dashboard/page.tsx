@@ -8,7 +8,7 @@ const Dashboard = () => {
     const router  = useRouter();
 
     const handleScreeningTest = () =>{
-        router.push('/verify')
+        router.push('/verificationfirst')
     }
   return (
     <section className={style.dash}>

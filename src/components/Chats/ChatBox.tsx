@@ -33,7 +33,7 @@ const ChatBox: React.FC<chatProps> = ({ chats }) => {
 
                       <span
                         style={{
-                          color: "white",
+                          color: "black",
                           borderRadius: "10px",
                           height: "auto",
                           whiteSpace: "none",
@@ -78,7 +78,7 @@ const ChatBox: React.FC<chatProps> = ({ chats }) => {
                       />
                       <span
                         style={{
-                          color: "white",
+                          color: "black",
                           borderRadius: "10px",
                           height: "auto",
                           whiteSpace: "none",

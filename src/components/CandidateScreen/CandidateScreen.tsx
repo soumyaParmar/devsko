@@ -41,6 +41,7 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   const [lastTranscript, setLastTranscript] = useState<string>("");
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [pauseTriggered, setPauseTriggered] = useState<boolean>(false);
+  const [repeatHandled, setRepeatHandled] = useState<boolean>(false);
   const {
     transcript,
     listening,
@@ -70,8 +71,13 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
       setPauseTriggered(false);
     }
 
-    if(listening && transcript.length < 10 && transcript.toLowerCase().includes('repeat') ){
+    if(listening && transcript.length < 10 && transcript.toLowerCase().includes('repeat') && !repeatHandled){
+      setRepeatHandled(true);
       speechTimer(handleUserNotSpeaking,7000)
+
+      setTimeout(() => {
+        setRepeatHandled(false);
+      }, 5000);
     }
 
     if(listening && transcript.length < 10 && transcript.toLowerCase().includes('sorry') && !pauseTriggered ){

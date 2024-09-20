@@ -5,14 +5,18 @@ import React, { useEffect, useRef, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { useRouter } from "next/navigation";
 
 const Temp = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [recording, setRecording] = useState(false);
+  // const [permission,setPermission] = useState<boolean>(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const[image,setImage] = useState<boolean>(false);
   const { transcript, resetTranscript } = useSpeechRecognition();
+  const route = useRouter();
 
   useEffect(() => {
     navigator.mediaDevices
@@ -41,7 +45,7 @@ const Temp = () => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+      setImage(true)
       const base64Image = canvas.toDataURL("image/jpeg", 0.5);
       console.log(base64Image);
     }
@@ -89,19 +93,35 @@ const Temp = () => {
     }
   };
 
+  const handleSecondVerification = () => {
+    route.push("verificationsecond");
+  };
+
   return (
-    <div>
-      <div>
-        <video ref={videoRef} autoPlay playsInline></video>
-        <button onClick={handleCapture}>Capture image</button>
-        <canvas ref={canvasRef} width={200} height={200}></canvas>
+    <div className="flex justify-center items-center flex-col gap-6 h-full">
+      <div className="flex justify-center items-center flex-col gap-6">
+        <div className="flex justify-center items-center flex-col">
+          <div className="flex gap-[50px]">
+            <video ref={videoRef} autoPlay playsInline style={{ width:'500px'}}></video>
+            <canvas ref={canvasRef}  style={{ width:'500px',display: image? "block":"none"}}></canvas>
+          </div>
+          <button className="bg-black text-white mt-3 pl-2 pr-2 rounded-xl" onClick={handleCapture}>Capture image</button>
+        </div>
+        <div className="flex flex-col justify-center items-center text-center">
+          <h1 className="text-xl font-semibold">
+            Please read below line after pressing the button. Start Recording
+          </h1>
+          <p>
+            Software engineering is not just about writing code. It’s about
+            solving problems and making lives better.
+          </p>
+          <button className="bg-black text-white mt-3 pl-2 pr-2 rounded-xl" onClick={recording ? stopRecording : startRecording}>
+            {recording ? "Stop Recording" : "Start Recording"}
+          </button>
+          <p>{transcript}</p>
+        </div>
       </div>
-      <div>
-        <button onClick={recording ? stopRecording : startRecording}>
-          {recording ? "Stop Recording" : "Start Recording"}
-        </button>
-        <p>{transcript}</p>
-      </div>
+      <button className="bg-green-400 text-white mt-3 pl-2 pr-2 rounded-xl" onClick={handleSecondVerification}>Next</button>
     </div>
   );
 };
