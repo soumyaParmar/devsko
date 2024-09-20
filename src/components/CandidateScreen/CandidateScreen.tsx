@@ -6,6 +6,8 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import Webcam from "react-webcam";
+import style from "../../styles/candidatescreen.module.css";
+import { testStartType } from "@/app/(routes)/interview/page";
 
 interface PassedProps {
   speechDone: boolean;
@@ -16,6 +18,7 @@ interface PassedProps {
   setText: StateSetter<boolean>;
   setUnsupported: StateSetter<boolean>;
   setUsersBlankAnswer: StateSetter<boolean>;
+  testStarted:testStartType | undefined;
 }
 
 const CandidateScreen: React.FC<PassedProps> = (props) => {
@@ -27,12 +30,13 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     nextQuestion,
     setText,
     setUnsupported,
-    setUsersBlankAnswer
+    setUsersBlankAnswer,
+    testStarted
   } = props;
   const webcamRef = useRef<Webcam | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
-  const [testStatus, setTestStatus] = useState<boolean>(false);
+  // const [testStatus, setTestStatus] = useState<boolean>(false);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [lastTranscript, setLastTranscript] = useState<string>("");
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -45,7 +49,7 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   } = useSpeechRecognition();
 
   useEffect(() => {
-    if (speechDone && testStatus) {
+    if (speechDone && testStarted=="yes") {
       SpeechRecognition.startListening({ continuous: true });
       resetTranscript();
       setDoneResponse("");
@@ -53,24 +57,24 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
       setText(false);
       setSpeechDone(false);
     }
-  }, [speechDone, testStatus]);
+  }, [speechDone,testStarted]);
 
   useEffect(() => {
     if (listening) {
       setDoneResponse(transcript);
     }
 
-    if (transcript !== lastTranscript && transcript.length > 10 ) {
+    if (listening && transcript !== lastTranscript && transcript.length > 10 ) {
       speechTimer(handleTranscriptPause,8000);
       setLastTranscript(transcript);
       setPauseTriggered(false);
     }
 
-    if(transcript.length < 10 || transcript.toLowerCase().includes('repeat') ){
+    if(listening && transcript.length < 10 && transcript.toLowerCase().includes('repeat') ){
       speechTimer(handleUserNotSpeaking,7000)
     }
 
-    if(transcript.length < 10 && transcript.toLowerCase().includes('sorry') && !pauseTriggered ){
+    if(listening && transcript.length < 10 && transcript.toLowerCase().includes('sorry') && !pauseTriggered ){
       speechTimer(() => {
         handleTranscriptPause();
         setPauseTriggered(true);
@@ -80,7 +84,17 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [listening, transcript, testStatus]);
+  }, [listening, transcript]);
+
+  useEffect(()=>{
+
+    if(testStarted=='yes'){
+      handleRecordingFromStart();
+    }else if(testStarted == 'no'){
+      handleRecordingWhenEnds();
+    }
+
+  },[testStarted])
 
   const speechTimer = (fun:()=>void,time:number) =>{
     if(timer) clearTimeout(timer);
@@ -94,6 +108,7 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
 
   const handleUserNotSpeaking = () =>{
     setUsersBlankAnswer(true);
+    setText(true);
     setDoneResponse("");
     setLastTranscript("");
     resetTranscript();
@@ -114,7 +129,6 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   };
 
   const handleRecordingFromStart = () => {
-    setTestStatus(true);
     setText(true);
     setRecordedChunks([]);
     setVideoUrl("");
@@ -132,7 +146,6 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
 
   const handleRecordingWhenEnds = () => {
     if(timer) clearTimeout(timer);
-    setTestStatus(false);
     setText(false);
     setSpeechDone(false);
     resetTranscript();
@@ -150,7 +163,9 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
 
       setVideoUrl(url);
       setRecordedChunks([]);
+      console.log(videoUrl);
     }
+    // route.push('/dashboard');
   };
 
   if (!browserSupportsSpeechRecognition) {
@@ -158,20 +173,8 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   }
 
   return (
-    <div className="webCam w-[35rem]">
-      {videoUrl ? (
-        <div>
-          <h3>Preview:</h3>
-          <video src={videoUrl} controls width={300} />
-        </div>
-      ) : (
+    <div className={style.webcam}>
         <Webcam ref={webcamRef} />
-      )}
-      {!testStatus ? (
-        <button onClick={handleRecordingFromStart}>start test</button>
-      ) : (
-        <button onClick={handleRecordingWhenEnds}>end test</button>
-      )}
     </div>
   );
 };

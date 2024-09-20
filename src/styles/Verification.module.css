@@ -1,5 +1,5 @@
 .outer{
-    @apply flex justify-center items-center h-screen;
+    @apply flex justify-center items-center h-screen mt-[-90px];
 }
 .inner{
     @apply h-2/3 w-[90%] flex flex-col gap-6
@@ -10,13 +10,16 @@
 .button2{
     @apply text-green-400 text-xl
 }
+.selectBtn{
+    @apply text-[1rem] p-3 mt-1 border;
+}
 .btn1{
-    @apply bg-green-500;
+    @apply bg-green-500 mb-10;
     padding: 5px 8px 5px 8px;
     border-radius: 5px;
 }
 .btn2{
-    @apply bg-gray-500 text-gray-300;
+    @apply bg-gray-500 text-gray-300 mb-10;
     padding: 5px 8px 5px 8px;
     border-radius: 5px;
 }

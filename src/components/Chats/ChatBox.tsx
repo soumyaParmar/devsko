@@ -1,6 +1,10 @@
+"use client";
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChatType } from "@/utils/Interfaces/Interview/interview";
 import Image from "next/image";
 import React from "react";
+import style from "../../styles/chat.module.css"
 
 type chatProps = {
   chats: ChatType[];
@@ -8,44 +12,52 @@ type chatProps = {
 
 const ChatBox: React.FC<chatProps> = ({ chats }) => {
   return (
-    <div className="h-screen">
-      <div
-        style={{
-          // border: "1px solid white",
-          borderRadius: "5px",
-          height: "95vh",
-          width: "450px ",
-          scrollbarWidth: "none",
-          marginTop: "0.5rem",
-          marginBottom: "0.5rem",
-          overflowY:'scroll'
-        }}
-        className="rightContainer bg-slate-900 "
-      >
+    <div className={style.outer_layer_chat}>
+      <h1>Chats</h1>
+      <div>
         {chats &&
           chats.map((item, index) => (
             <div key={index} style={{ padding: "20px 0px 0 10px" }}>
+              {/* question box */}
               <div>
                 {item.question && (
                   <>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-5">
                       <Image
                         src="/interviewer.webp"
                         alt="interviewer"
-                        width={40}
-                        height={40}
-                        className="h-[40px]"
+                        width={30}
+                        height={30}
+                        className="h-[30px] mt-1"
                       />
+
                       <span
                         style={{
-                          backgroundColor: "white",
-                          color: "black",
+                          color: "white",
                           borderRadius: "10px",
-                          padding: "10px 10px",
                           height: "auto",
+                          whiteSpace: "none",
+                          width: "19rem",
                         }}
                       >
-                        {item.question}
+                        {`${item.question} `}
+
+                        <div className="text-[10px] relative left-[1px] mt-1">
+                          {item.timeStamp
+                            ? new Date(item.timeStamp).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : "No time available"}
+                          {/* for setting the intnernational time zones */}
+                          {/* {item.timeStamp
+                            ? new Intl.DateTimeFormat("en-US", {
+                                timeZone: "Europe/London",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }).format(new Date(item.timeStamp))
+                            : "No time available"} */}
+                        </div>
                       </span>
                     </div>
                   </>
@@ -53,28 +65,46 @@ const ChatBox: React.FC<chatProps> = ({ chats }) => {
               </div>
 
               {/* response box */}
-              <div style={{ display: "flex", justifyContent: "end" }}>
+              <div style={{ display: "flex", justifyContent: "start" }}>
                 {item.response && (
                   <>
                     <div className="flex gap-2 ">
-                      <span
-                        style={{
-                          textAlign: "right",
-                          backgroundColor: "white",
-                          color: "black",
-                          borderRadius: "10px",
-                          padding: "5px 10px",
-                        }}
-                      >
-                        {item.response}
-                      </span>
                       <Image
                         src="/user.png"
                         alt="interviewer"
-                        width={40}
-                        height={40}
-                        className="h-[40px] rounded-full"
+                        width={25}
+                        height={30}
+                        className="h-[25px] rounded-full mt-1"
                       />
+                      <span
+                        style={{
+                          color: "white",
+                          borderRadius: "10px",
+                          height: "auto",
+                          whiteSpace: "none",
+                          width: "19rem",
+                        }}
+                      >
+                        {`${item.response} `}
+                        <div className="text-[10px] relative left-[1px] mt-1">
+                          {item.timeStamp
+                            ? new Date(item.timeStamp).toLocaleString("en-US", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : "No time available"}
+
+                          {/* for setting the intnernational time zones */}
+
+                          {/* {item.timeStamp
+                            ? new Intl.DateTimeFormat("en-US", {
+                                timeZone: "Europe/London",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }).format(new Date(item.timeStamp))
+                            : "No time available"} */}
+                        </div>
+                      </span>
                     </div>
                   </>
                 )}
