@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChatType } from "@/utils/Interfaces/Interview/interview";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import style from "../../styles/chat.module.css";
 
 type chatProps = {
@@ -12,6 +12,14 @@ type chatProps = {
 };
 
 const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
+ const divRef = useRef<HTMLDivElement>(null);
+
+ useEffect(() => {
+  if (divRef.current) {
+    divRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [chats, liveChat]);
+
   return (
     <div className={style.outer_layer_chat}>
       <h1>Chats</h1>
@@ -136,6 +144,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
               </div>
             </div>
           ))}
+          <div ref={divRef}></div>
       </div>
     </div>
   );

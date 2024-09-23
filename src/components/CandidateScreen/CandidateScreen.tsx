@@ -66,18 +66,19 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     }
 
     if (listening && transcript !== lastTranscript && transcript.length > 10 ) {
-      speechTimer(handleTranscriptPause,8000);
+      speechTimer(handleTranscriptPause,6000);
       setLastTranscript(transcript);
       setPauseTriggered(false);
+      setRepeatHandled(false);
     }
 
     if(listening && transcript.length < 10 && transcript.toLowerCase().includes('repeat') && !repeatHandled){
       setRepeatHandled(true);
-      speechTimer(handleUserNotSpeaking,7000)
+      speechTimer(()=>{
+        handleUserNotSpeaking();
+        setRepeatHandled(true);
+      },7000)
 
-      setTimeout(() => {
-        setRepeatHandled(false);
-      }, 5000);
     }
 
     if(listening && transcript.length < 10 && transcript.toLowerCase().includes('sorry') && !pauseTriggered ){
@@ -96,7 +97,7 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
 
     if(testStarted=='yes'){
       handleRecordingFromStart();
-    }else if(testStarted == 'no'){
+    }else if(testStarted == 'end'){
       handleRecordingWhenEnds();
     }
 

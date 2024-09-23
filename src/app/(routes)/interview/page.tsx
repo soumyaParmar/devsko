@@ -19,6 +19,7 @@ import { getCurrentDate } from "@/helpers/getCurrentDate";
 import CaptionBox from "@/common/CaptionBox/CaptionBox";
 import ErrorPopUp from "@/components/Modal/ErrorPopUp";
 import logEvent from "@/lib/logEventFunc";
+import { useRouter } from "next/navigation";
 
 // const VideoRecorder = dynamic(
 //   () => import("@/components/VideoRecoeder/VideoRecorder"),
@@ -37,13 +38,14 @@ const Interview = () => {
   const [unsupported, setUnsupported] = useState<boolean>(false);
   const [openWhiteBoard, setOpenWhiteBoard] = useState<boolean>(false);
   const [usersBlankAnswer, setUsersBlankAnswer] = useState<boolean>(false);
-  const [testStarted, setTestStarted] = useState<testStartType>();
+  const [testStarted, setTestStarted] = useState<testStartType>("no");
   const [openCaption, setOpenCaption] = useState<boolean>(false);
   const { day, month, year } = getCurrentDate();
   const [networkErrorPopup, setnetworkErrorPopup] = useState<boolean>(true);
   const [ mediaDevicesError,setmediaDevicesError] = useState<boolean>(false);
   const [slowNetwork, setslowNetwork] = useState<boolean>(false);
   const [liveChat,setLiveChat] =  useState<string>("");
+  const route = useRouter();
 
   let reconnection: number = 0;
   let disconnected: number = 0;
@@ -78,7 +80,7 @@ const Interview = () => {
   }, [done,doneResponse]);
 
   useEffect(() => {
-    if ("speechSynthesis" in window && usersBlankAnswer) {
+    if ("speechSynthesis" in window && usersBlankAnswer && testStarted != "end") {
       const speech = `I will repeat my question. ${questions[response]} `;
       setLiveChat("");
       const utterance = new SpeechSynthesisUtterance(speech);
@@ -99,7 +101,7 @@ const Interview = () => {
           "http://worldtimeapi.org/api/timezone/Asia/Kolkata"
         );
         const data = await res.json();
-        if ("speechSynthesis" in window && text) {
+        if ("speechSynthesis" in window && text && testStarted != "end") {
           const utterance = new SpeechSynthesisUtterance(questions[response]);
           setLiveChat("");
           speechSynthesis.speak(utterance);
@@ -231,7 +233,7 @@ const Interview = () => {
   };
 
   const handleTestEnd = () => {
-    setTestStarted("no");
+    setTestStarted("end");
   };
 
   const OpenCaptionBox = () => {
@@ -248,6 +250,15 @@ const Interview = () => {
 
   return (
     <section className="h-full">
+      {testStarted == "end" ? (
+        <>
+        <div>
+          <p>Thank You,  We will get back to you soon.</p>
+          <button onClick={()=>route.push('/dashboard')}>Dashboard</button>
+        </div>
+        </>
+      ):(
+      <>
       {!networkErrorPopup && (
         <ErrorPopUp
           errorPopup={!networkErrorPopup}
@@ -267,7 +278,7 @@ const Interview = () => {
         <div className={style.logo}>DevSko</div>
         <div className={style.top_middle}>
           <span className={style.interview}>
-            Interview for {"UI/UX Designer"}
+            Interview for {"Software Developer"}
           </span>
           <span className={style.day}>{`${day} ${month} ${year}`}</span>
         </div>
@@ -350,7 +361,8 @@ const Interview = () => {
           <CaptionBox caption={doneResponse} />
         </div>
       )}
-      <div>{doneResponse}</div>
+      </>
+    )}
     </section>
   );
 };
