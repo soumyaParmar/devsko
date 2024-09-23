@@ -36,7 +36,6 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   const webcamRef = useRef<Webcam | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
-  // const [testStatus, setTestStatus] = useState<boolean>(false);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [lastTranscript, setLastTranscript] = useState<string>("");
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);

@@ -43,6 +43,8 @@ const Interview = () => {
   const [networkErrorPopup, setnetworkErrorPopup] = useState<boolean>(true);
   const [ mediaDevicesError,setmediaDevicesError] = useState<boolean>(false);
   const [slowNetwork, setslowNetwork] = useState<boolean>(false);
+  const [liveChat,setLiveChat] =  useState<string>("");
+
   let reconnection: number = 0;
   let disconnected: number = 0;
 
@@ -70,13 +72,15 @@ const Interview = () => {
         console.error("Error fetching server time:", error);
       }
     };
+    setLiveChat(doneResponse)
 
     fetchResponse();
-  }, [done]);
+  }, [done,doneResponse]);
 
   useEffect(() => {
     if ("speechSynthesis" in window && usersBlankAnswer) {
       const speech = `I will repeat my question. ${questions[response]} `;
+      setLiveChat("");
       const utterance = new SpeechSynthesisUtterance(speech);
       speechSynthesis.speak(utterance);
       utterance.onend = () => {
@@ -97,6 +101,7 @@ const Interview = () => {
         const data = await res.json();
         if ("speechSynthesis" in window && text) {
           const utterance = new SpeechSynthesisUtterance(questions[response]);
+          setLiveChat("");
           speechSynthesis.speak(utterance);
           utterance.onend = () => {
             setSpeechDone(true);
@@ -321,7 +326,7 @@ const Interview = () => {
           </div>
         </div>
         <div className="h-full w-1/3">
-          <ChatBox chats={allChat} />
+          <ChatBox chats={allChat} liveChat={liveChat} />
         </div>
       </div>
       <div className={style.lower}>
