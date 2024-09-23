@@ -32,7 +32,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="h-[30px] mt-1"
                       />
                       <div>
-                      <span
+                      <p
                         style={{
                           borderRadius: "20px 20px 20px 2px",
                           whiteSpace: "none",
@@ -40,7 +40,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="bg-white h-auto p-[6px] text-black text-sm"
                       >
                         {`${item.question} `}
-                        </span>
+                        </p>
 
                         <div className="text-[10px] relative left-[1px] pt-1 pl-1 text-gray-400">
                           {item.timeStamp
@@ -66,7 +66,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
 
               {/* response box */}
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                {item.response && !liveChat ? (
+                {item.response ? (
                   <>
                     <div className="flex gap-2 flex-row-reverse">
                       <Image
@@ -77,7 +77,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="h-[25px] rounded-full mt-1"
                       />
                       <div>
-                      <span
+                      <p
                         style={{
                           borderRadius: "20px 20px 2px 20px",
                           whiteSpace: "none",
@@ -86,7 +86,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="text-white bg-blue-600 p-[6px] h-auto text-sm"
                       >
                         {`${item.response} `}
-                        </span>
+                        </p>
                         <div className="text-[10px] relative left-[1px] pt-1 pl-1 text-gray-400">
                           {item.timeStamp
                             ? new Date(item.timeStamp).toLocaleString("en-US", {
@@ -110,7 +110,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                   </>
                 ) : (
                   <>
-                    {liveChat && !item.response && (
+                    {index === chats.length -1 && liveChat && (
                       <div className="flex gap-2 pt-3 flex-row-reverse">
                         <Image
                           src="/user.png"
@@ -119,7 +119,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                           height={30}
                           className="h-[25px] rounded-full mt-1"
                         />
-                        <span
+                        <p
                           style={{
                             borderRadius: "20px 20px 2px 20px",
                             whiteSpace: "none",
@@ -128,7 +128,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                           className="text-white bg-blue-600 p-[6px] h-auto text-sm"
                         >
                           {`${liveChat} `}
-                        </span>
+                        </p>
                       </div>
                     )}
                   </>
