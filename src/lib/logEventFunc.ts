@@ -7,8 +7,8 @@ interface logsMessageType {
 const logsMessage: logsMessageType[] = [];
 
 export default function logEvent(type: string, message:string, time: Date){
-    console.log(`${type} ${message} ${time}`)
-    console.log(logsMessage)
+    // console.log(`${type} ${message} ${time}`)
+    // console.log(logsMessage)
 
     logsMessage.push({type, message, time})
 }

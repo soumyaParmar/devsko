@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
@@ -9,8 +10,12 @@ import logEvent from "@/lib/logEventFunc";
 
 const INITIAL_COUNTER = 60;
 
-const ErrorPopUp: React.FC<ErrorPopUpProps> = ({ errorPopup, errorMsg }) => {
+const ErrorPopUp: React.FC<ErrorPopUpProps> = ({
+  errorPopup,
+  errorMsg
+}) => {
   const [counter, setCounter] = useState<number>(INITIAL_COUNTER);
+  const [open, isOpen] = useState(errorPopup)
   const navigate = useRouter();
 
   const handleEndTest = () => {
@@ -23,23 +28,33 @@ const ErrorPopUp: React.FC<ErrorPopUpProps> = ({ errorPopup, errorMsg }) => {
   };
 
   // for setting up the timer
+  // useEffect(() => {
+  //   if (counter > 0) {
+  //     const timer = setInterval(() => {
+  //       setCounter(counter - 1);
+  //     }, 1000);
+  //     return () => clearInterval(timer);
+  //   } else {
+  //     handleEndTest();
+  //   }
+  // }, [counter]);
+
   useEffect(() => {
-    if (counter > 0) {
-      const timer = setInterval(() => {
-        setCounter(counter - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else {
-      handleEndTest();
+    if (open) {
+      const timer = setTimeout(() => {
+        isOpen(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
-  }, [counter]);
+  }, [open]);
 
   return (
     <>
-      <Modal title="Error has come" centered open={errorPopup} footer={[]}>
+      <Modal title="Error has come" open={open} footer={[]}>
         <p>{errorMsg}</p>
-        
-        <p>{counter}</p>
+
+        {/* <p>{counter}</p> */}
       </Modal>
     </>
   );

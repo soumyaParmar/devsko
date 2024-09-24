@@ -10,7 +10,7 @@ import { ScreenType } from "@/utils/Interfaces/Verification/verification";
 
 // Define device type
 interface MediaDeviceInfoExtended extends MediaDeviceInfo {
-  deviceId: string ;
+  deviceId: string;
   label: string;
   kind: MediaDeviceKind;
 }
@@ -83,12 +83,38 @@ const Verification = () => {
       const audioContext = new AudioContext();
       setAudioContext(audioContext);
       startMicTest(audioContext);
+      localStorage.setItem("preferredMic", selectedMic)
     }
   }, [selectedMic]);
 
+  useEffect(() => {
+    const startCameraPreview = async () => {
+      if (selectedCamera) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { deviceId: { exact: selectedCamera } },
+          });
+          const videoElement = document.getElementById(
+            "cameraPreview"
+          ) as HTMLVideoElement;
+          if (videoElement) {
+            videoElement.srcObject = stream;
+          }
+        } catch (error) {
+          console.error("Error accessing camera:", error);
+          setError("Error accessing camera. Please check your permissions.");
+        }
+        localStorage.setItem("preferredCamera", selectedCamera);
+      }
+
+    };
+
+    startCameraPreview();
+  }, [selectedCamera]);
+
   // Function to test microphone input and display audio levels
   const startMicTest = async (audioCtx: AudioContext) => {
-    console.log(window.localStorage)
+    console.log(window.localStorage);
     try {
       if (selectedMic) {
         console.log(selectedMic);
@@ -127,7 +153,7 @@ const Verification = () => {
   // Function to test speaker
   const testSpeaker = () => {
     if (selectedSpeaker) {
-      const audio = new Audio("/test-sound2.mp3"); // Ensure this path is correct
+      const audio = new Audio("/test-sound2.mp3");
       if (typeof audio.setSinkId === "function") {
         audio
           .setSinkId(selectedSpeaker)
@@ -172,7 +198,7 @@ const Verification = () => {
       setSelectedCamera((prev) => prev || defaultCamera?.deviceId || null);
       setSelectedSpeaker((prev) => prev || defaultSpeaker?.deviceId || null);
 
-       localStorage.setItem("preferredCamera", defaultCamera?.deviceId ?? "");
+      localStorage.setItem("preferredCamera", defaultCamera?.deviceId ?? "");
       localStorage.setItem("preferredMic", defaultMic?.deviceId ?? "");
       // localStorage.setItem("preferredSpeaker", defaultSpeaker.deviceId);
     } catch (err) {
@@ -182,30 +208,6 @@ const Verification = () => {
       );
     }
   };
-
-  useEffect(() => {
-    const startCameraPreview = async () => {
-      if (selectedCamera) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: { exact: selectedCamera } },
-          });
-          const videoElement = document.getElementById(
-            "cameraPreview"
-          ) as HTMLVideoElement;
-          if (videoElement) {
-            videoElement.srcObject = stream;
-          }
-        } catch (error) {
-          console.error("Error accessing camera:", error);
-          setError("Error accessing camera. Please check your permissions.");
-        }
-      }
-    };
-
-    startCameraPreview();
-    
-  }, [selectedCamera]);
 
   // Function to get camera and microphone permission
   const getCameraPermission = async () => {
@@ -365,7 +367,7 @@ const Verification = () => {
                       value={selectedCamera || ""}
                       onChange={(e) => {
                         setSelectedCamera(e.target.value);
-                        localStorage.setItem("preferredCamera", e.target.value);
+                        // localStorage.setItem("preferredCamera", e.target.value);
                       }}
                       className={style.selectBtn}
                     >
@@ -387,7 +389,7 @@ const Verification = () => {
                       value={selectedMic || ""}
                       onChange={(e) => {
                         setSelectedMic(e.target.value);
-                        localStorage.setItem("preferredMic", e.target.value);
+                        // localStorage.setItem("preferredMic", e.target.value);
                       }}
                       className={`mb-3 ${style.selectBtn}`}
                     >
@@ -430,8 +432,12 @@ const Verification = () => {
                     <br />
                     <select
                       value={selectedSpeaker || ""}
-                      onChange={(e) => {setSelectedSpeaker(e.target.value);
-                        localStorage.setItem("preferredSpeaker", e.target.value)
+                      onChange={(e) => {
+                        setSelectedSpeaker(e.target.value);
+                        // localStorage.setItem(
+                        //   "preferredSpeaker",
+                        //   e.target.value
+                        // );
                       }}
                       className={style.selectBtn}
                     >

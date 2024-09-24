@@ -4,7 +4,6 @@
 
 import "regenerator-runtime/runtime";
 import React, { useEffect, useState } from "react";
-// import dynamic from "next/dynamic";
 import { questions } from "@/utils/Questions/Questions";
 import { ChatType } from "@/utils/Interfaces/Interview/interview";
 import ChatBox from "@/components/Chats/ChatBox";
@@ -20,6 +19,7 @@ import CaptionBox from "@/common/CaptionBox/CaptionBox";
 import ErrorPopUp from "@/components/Modal/ErrorPopUp";
 import logEvent from "@/lib/logEventFunc";
 import { useRouter } from "next/navigation";
+import { stopWatch } from "@/helpers/stopWatch";
 
 // const VideoRecorder = dynamic(
 //   () => import("@/components/VideoRecoeder/VideoRecorder"),
@@ -40,15 +40,28 @@ const Interview = () => {
   const [usersBlankAnswer, setUsersBlankAnswer] = useState<boolean>(false);
   const [testStarted, setTestStarted] = useState<testStartType>("no");
   const [openCaption, setOpenCaption] = useState<boolean>(false);
+  const [openSetting, setOpenSetting] = useState<boolean>(false);
   const { day, month, year } = getCurrentDate();
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [devicePopup, setDevicePopup] = useState(false);
+  const [selectedMic, setSelectedMic] = useState("");
+  const [selectedCamera, setSelectedCamera] = useState("");
   const [networkErrorPopup, setnetworkErrorPopup] = useState<boolean>(true);
-  const [ mediaDevicesError,setmediaDevicesError] = useState<boolean>(false);
   const [slowNetwork, setslowNetwork] = useState<boolean>(false);
-  const [liveChat,setLiveChat] =  useState<string>("");
+  const [liveChat, setLiveChat] = useState<string>("");
+  const [time, setTime] = useState({ hour: "00", min: "00", sec: "00" });
   const route = useRouter();
+
+  let stopwatchId : NodeJS.Timeout | null = null
 
   let reconnection: number = 0;
   let disconnected: number = 0;
+  // const preferredMic = localStorage.getItem("preferredMic");
+  // const preferredCamera = localStorage.getItem("preferredCamera");
+  let preferredMic: string | null = "";
+  let preferredCamera: string| null = "";
+  
 
   // for setting up the resoonse
   useEffect(() => {
@@ -74,10 +87,10 @@ const Interview = () => {
         console.error("Error fetching server time:", error);
       }
     };
-    setLiveChat(doneResponse)
+    setLiveChat(doneResponse);
 
     fetchResponse();
-  }, [done,doneResponse]);
+  }, [done, doneResponse]);
 
   useEffect(() => {
     if ("speechSynthesis" in window && usersBlankAnswer && testStarted != "end") {
@@ -129,6 +142,35 @@ const Interview = () => {
   }, [text]);
 
   useEffect(() => {
+    settingPreferredDevice();
+  }, [preferredMic, preferredCamera]);
+
+  useEffect(() => {
+    preferredMic = localStorage.getItem("preferredMic");
+     preferredCamera = localStorage.getItem("preferredCamera");
+
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const availableMics = devices.filter(
+        (device) => device.kind === "audioinput"
+      );
+
+      const availableCamera = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
+      console.log(availableMics);
+
+      setAudioDevices(availableMics);
+      setVideoDevices(availableCamera);
+    });
+
+    // function for setting preferred devices
+    settingPreferredDevice();
+
+    navigator.mediaDevices.ondevicechange = () => {
+      console.log("Device changed");
+      checkDevice();
+    };
+
     // Set the initial online status
     handleOnlineStatus();
 
@@ -137,35 +179,61 @@ const Interview = () => {
 
     // Set up the interval to check the connection stability in every 10 seconds
     const internetCheckup = setInterval(checkInternetSpeed, 10000);
-    const deviceCheckup = setInterval(checkDevice, 10000);
 
     return () => {
       clearInterval(internetCheckup);
-      clearInterval(deviceCheckup);
     };
   }, []);
 
-  const checkDevice = () => {
-    const selectedMic = localStorage.getItem("preferredMic");
-    const selectedCamera = localStorage.getItem("preferredCamera");
-    console.log(selectedCamera);
-
+  const settingPreferredDevice = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({
+        audio: { deviceId: preferredMic ? { exact: preferredMic } : undefined },
+        video: {
+          deviceId: preferredCamera ? { exact: preferredCamera } : undefined,
+        },
+      })
       .then((stream) => {
-        const videoTrack = stream.getVideoTracks()[0];
-        const audioTrack = stream.getAudioTracks()[0];
-
-        if (
-          videoTrack.getSettings().deviceId !== selectedCamera ||
-          audioTrack.getSettings().deviceId !== selectedMic
-        ) {
-          setmediaDevicesError(true);
-        } else setmediaDevicesError(false);
+        const audioTracks = stream.getAudioTracks();
+        const videoElement = document.querySelector("video");
+        if (videoElement) videoElement.srcObject = stream;
+        console.log("Using microphone:", audioTracks[0].label);
       })
       .catch((error) => {
-        console.error("Error accessing media devices:", error);
+        console.error("Error accessing microphone/camera:", error);
       });
+  };
+
+  const checkDevice = () => {
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const availableMics = devices.filter(
+        (device) => device.kind === "audioinput"
+      );
+
+      const availableCamera = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
+      console.log(availableMics);
+
+      setAudioDevices(availableMics);
+      setVideoDevices(availableCamera);
+
+      // Check if the previously selected mic is still available
+      const micStillAvailable = availableMics.some(
+        (device) => device.deviceId === preferredMic
+      );
+
+      // Check if the previously selected camera is still available
+      const cameraStillAvailable = availableCamera.some(
+        (device) => device.deviceId === preferredCamera
+      );
+      if (!micStillAvailable || !cameraStillAvailable) {
+        console.log(
+          "Your selected microphone is disconnected or changed. Please select a new microphone."
+        );
+        setDevicePopup(true);
+      }
+    });
   };
 
   // Function to check internet speed
@@ -230,14 +298,21 @@ const Interview = () => {
 
   const handleTestStart = () => {
     setTestStarted("yes");
+    stopwatchId = stopWatch(setTime)
+
   };
 
   const handleTestEnd = () => {
     setTestStarted("end");
+    if(stopwatchId) clearInterval(stopwatchId)
   };
 
   const OpenCaptionBox = () => {
     setOpenCaption(!openCaption);
+  };
+
+  const handleOpenSetting = () => {
+    setOpenSetting(!openSetting);
   };
 
   if (unsupported) {
@@ -263,16 +338,16 @@ const Interview = () => {
         <ErrorPopUp
           errorPopup={!networkErrorPopup}
           errorMsg="You are currently offline. Please check your internet connection."
+          setErrorPopup={setnetworkErrorPopup}
         />
       )}
-
-      {mediaDevicesError && (
-            // <ErrorPopUp
-            // errorPopup={mediaDevicesError}
-            // errorMsg=" Selected Microphone/Camera is not detected. "
-            // />
-            <></>
-            )}
+      {devicePopup && (
+        <ErrorPopUp
+          errorPopup={devicePopup}
+          errorMsg="Your selected devices are disconnected or changed. Please select a new one from setting"
+          setErrorPopup={setDevicePopup}
+        />
+      )}
 
       <div className={style.top}>
         <div className={style.logo}>DevSko</div>
@@ -283,7 +358,7 @@ const Interview = () => {
           <span className={style.day}>{`${day} ${month} ${year}`}</span>
         </div>
         <div className={style.right_btns}>
-          <span>{"00:00:00"}</span>
+          <span>{`${time.hour}:${time.min}:${time.sec}`}</span>
           <button
             className={testStarted == "yes" ? style.end_btn : style.start_btn}
             onClick={testStarted == "yes" ? handleTestEnd : handleTestStart}
@@ -348,7 +423,7 @@ const Interview = () => {
           <span onClick={OpenCaptionBox}>Captions</span>
         </div>
         <div>
-          <span>Settings</span>
+          <span onClick={handleOpenSetting}>Settings</span>
         </div>
       </div>
       {openWhiteBoard && (
@@ -359,6 +434,48 @@ const Interview = () => {
       {openCaption && (
         <div className="absolute z-20 h-[300px] w-[500px] left-1/2 bottom-[70px]">
           <CaptionBox caption={doneResponse} />
+        </div>
+      )}
+
+      {openSetting && (
+        <div className="absolute z-20 h-[300px] w-[500px] border right-0 bottom-[70px] bg-slate-50">
+          <p>Please select mic and camera from here:</p>
+          {/* for Microphone selection */}
+          <div>
+            <label>Select Microphone:</label> <br />
+            <select
+              value={selectedMic || ""}
+              onChange={(e) => {
+                setSelectedMic(e.target.value);
+                localStorage.setItem("preferredMic", e.target.value);
+              }}
+              className={`mb-3`}
+            >
+              {audioDevices.map((device) => (
+                <option key={device.deviceId} value={device.deviceId}>
+                  {device.label || `Microphone ${device.deviceId}`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label>Select Camera:</label> <br />
+            <select
+              value={selectedCamera || ""}
+              onChange={(e) => {
+                setSelectedCamera(e.target.value);
+                localStorage.setItem("preferredCamera", e.target.value);
+              }}
+              className={`mb-3`}
+            >
+              {videoDevices.map((device) => (
+                <option key={device.deviceId} value={device.deviceId}>
+                  {device.label || `Microphone ${device.deviceId}`}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
       </>
