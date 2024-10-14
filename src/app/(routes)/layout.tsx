@@ -1,7 +1,7 @@
 'use client';
-import { validateToken } from '@/lib/tokenHandler';
-import { CircularProgress } from '@mui/material';
-import React, { ReactNode, useEffect, useState } from 'react'
+// import { validateToken } from '@/lib/tokenHandler';
+// import { CircularProgress } from '@mui/material';
+import React, { ReactNode } from 'react'
 
 const Layout = ({ children }: Readonly<{ children: ReactNode }>) => {
   // const [validating, setValidating] = useState(true)
