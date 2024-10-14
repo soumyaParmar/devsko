@@ -1,0 +1,157 @@
+.main {
+  @apply h-screen w-full border bg-[#FBD7FF] flex justify-center items-center gap-4 overflow-hidden;
+}
+.container {
+  @apply w-[38rem] h-full;
+}
+.btnContainer {
+  @apply w-[3rem] h-full flex flex-col justify-center items-center gap-2;
+}
+
+.btnContainer button {
+  @apply w-[3rem] h-[3rem] bg-white rounded-full;
+}
+
+.btnTextBlack {
+  @apply text-[#000000];
+}
+
+.btnTextGray {
+  @apply text-[#555555];
+}
+.formTop {
+  @apply flex flex-col gap-2  w-[25rem] h-[7rem] m-auto mt-[1.5rem] justify-center items-center;
+}
+
+.formFields {
+  @apply mt-[-1rem];
+}
+.userName {
+  @apply text-[1.75rem] font-medium text-[#000000] leading-[2.188rem];
+}
+.description {
+  @apply text-[0.875rem] text-[#555555] text-center font-normal;
+}
+
+.formContainer {
+  @apply w-full h-auto m-auto mt-[1.5rem] px-[2rem] py-[1rem] rounded-[1.25rem] bg-[#FFFFFF];
+}
+
+.formBottom {
+  @apply w-full mt-[3rem];
+}
+
+.formTitle {
+  @apply text-[0.85rem] font-normal text-[#555555] leading-[2.188rem] flex items-center gap-1 text-center;
+}
+
+.input {
+  @apply text-[#242424] min-h-[2.7rem] rounded-[8px] outline-none leading-[1.15rem] border text-[0.85rem];
+  padding: 0.15rem 0.5rem;
+  border-color: #ededed;
+}
+
+.input:focus {
+  @apply border-2 border-[#000000] rounded-[8px];
+}
+
+
+.input[type="date"] {
+  @apply text-[#555555] uppercase ;
+}
+
+.inputContainer {
+  @apply flex flex-col gap-1 mt-3;
+}
+.inputContainer label {
+  @apply text-[#000000] text-[0.85rem] font-medium leading-[1.15rem] ml-1;
+}
+
+.button {
+  @apply bg-[#000000] text-[#ffffff] w-[8.5em] h-[2.5rem] outline-none border-collapse rounded-[8px] text-center flex justify-center items-center p-3 relative mt-4 cursor-pointer;
+  transition: all 0.6s ease;
+}
+
+.button:hover {
+  background-color: #333333;
+  cursor: pointer;
+}
+
+.button svg {
+  @apply w-[1.2rem] flex;
+  transition: all 0.6s ease;
+  margin:  1.3rem;
+  position: absolute;
+  left: -1rem;
+}
+
+.button:hover svg {
+  transform: translateX(5px);
+}
+
+.technologiesButton {
+  @apply border rounded-[4px] px-2 py-1 text-[#1A1E25] mb-5;
+  border-color: #EDEDED;
+  transition: all 0.6s ease;
+
+}
+
+.technologiesButton:hover {
+  @apply   bg-[#999999];
+}
+
+.text {
+  margin: 0 1.5em;
+}
+
+.technologiesContainer {
+  @apply h-[13rem] w-full mt-5 overflow-y-auto;
+}
+
+.technologiesContainer::-webkit-scrollbar {
+  display: none;  
+}
+
+.errorMsg{
+  @apply text-[0.7rem] text-red-900 ml-1;
+}
+.errorBorder{
+  @apply border-2 border-red-900;
+}
+.errorLabel{
+  @apply text-red-900;
+}
+
+.inputContainerOuter{
+  @apply w-full flex flex-col;
+}
+
+.popover{
+  @apply bg-[#FFFFFF] text-[#555555] rounded-[8px] h-[10rem] mt-[-1.3rem];
+  padding: 12px 16px 16px 16px;
+}
+
+.rating {
+  display: inline-block;
+}
+
+.rating input {
+  display: none;
+  @apply w-full h-full;
+}
+
+.rating label {
+  @apply cursor-pointer text-[#ccc] float-right transition-colors duration-300;
+}
+
+.rating label:before {
+  @apply content-['\2605'];
+  font-size: 1.5rem;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+  @apply text-[#e58e09] transition-colors duration-300;
+}
+

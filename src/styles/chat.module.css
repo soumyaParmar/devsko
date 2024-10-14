@@ -1,5 +1,5 @@
 .outer_layer_chat{
-    @apply h-full bg-slate-50 overflow-y-scroll rounded-xl border;
+    @apply h-full bg-slate-50 overflow-y-scroll rounded-xl border pb-2;
     scrollbar-width: none;
 }
 .outer_layer_chat h1{

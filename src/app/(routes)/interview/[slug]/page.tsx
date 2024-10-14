@@ -89,8 +89,8 @@ const Interview = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [stopwatchId, setStopWatchId] = useState<NodeJS.Timeout | null>(null);
   const [code, setCode] = useState("// Write your code here");
-  const codeRef = useRef<HTMLPreElement>(null);
-  const childSize = { width: 180, height: 180 };
+  const [selectedCodingLanguage, setSelectedCodingLanguage] =
+    useState<string>("");
   // const [isModalOpen, setModalOpen] = useState(false);
   // const [timerRunning, setTimerRunning] = useState<boolean>(false);
   // const [timerData, setTimerData] = useState({
@@ -158,7 +158,8 @@ const Interview = () => {
       usersBlankAnswer &&
       testStarted != "end"
     ) {
-      const speech = `I will repeat my question. ${questions[response]} `;
+      const speech = `I will repeat my question. ${questions[response]?.question_text} `;
+      setLiveQuestion(speech)
       setLiveChat("");
       const utterance = new SpeechSynthesisUtterance(speech);
       speechSynthesis.speak(utterance);
@@ -166,6 +167,7 @@ const Interview = () => {
         setSpeechDone(true);
         setText(false);
         setUsersBlankAnswer(false);
+        setLiveQuestion("")
       };
     }
   }, [usersBlankAnswer]);
@@ -179,6 +181,7 @@ const Interview = () => {
         const utterance = new SpeechSynthesisUtterance(
           questions[response]?.question_text
         );
+        setLiveQuestion(questions[response]?.question_text)
         speechSynthesis.speak(utterance);
         utterance.onend = () => {
           setSpeechDone(true);
@@ -451,7 +454,7 @@ const Interview = () => {
     setTestStarted("end");
     // setTimerRunning(false);
     if (stopwatchId) clearInterval(stopwatchId);
-    route.push('/endofinterview/1');
+    route.push("/endofinterview/1");
   };
 
   // const pauseTimer = () => {
@@ -537,10 +540,7 @@ const Interview = () => {
   };
 
   return (
-    <section
-      className={`${style.section}`}
-      ref={containerRef}
-    >
+    <section className={`${style.section}`} ref={containerRef}>
       {testStarted == "end" ? (
         <>
           <div className="h-screen w-screen flex flex-col justify-center items-center">
@@ -550,8 +550,9 @@ const Interview = () => {
         </>
       ) : (
         <>
-          {!isfullScreen && <div>
-            {/* {!networkErrorPopup && (
+          {!isfullScreen && (
+            <div>
+              {/* {!networkErrorPopup && (
               <Popup
                 isVisible={!networkErrorPopup}
                 message="Your device is offline. Please check your internet settings."
@@ -588,7 +589,7 @@ const Interview = () => {
                 type="Warning"
               />
             )} */}
-            {/* {isExtendedScreen && (
+              {/* {isExtendedScreen && (
               <Popup
                 isVisible={isExtendedScreen}
                 message="Second Screen is detected"
@@ -597,16 +598,17 @@ const Interview = () => {
                 type="Warning"
               />
             )} */}
-            {!isfullScreen && (
-              <Popup
-                isVisible={!isfullScreen}
-                message="To continue this interview full screen is required"
-                onClose={handleFullscreen}
-                isWarning={true}
-                type="Warning"
-              />
-            )}
-          </div>}
+              {!isfullScreen && (
+                <Popup
+                  isVisible={!isfullScreen}
+                  message="To continue this interview full screen is required"
+                  onClose={handleFullscreen}
+                  isWarning={true}
+                  type="Warning"
+                />
+              )}
+            </div>
+          )}
 
           <div className={style.top}>
             <div className={style.logo}>DevSko</div>
@@ -643,20 +645,35 @@ const Interview = () => {
               >
                 {/* <WhiteBoard /> */}
                 <Tldraw />
+                <div className="absolute bottom-1 left-[40%] text-white z-[999]">
+                  <button className="mr-1  bg-green-400 pl-4 pr-4 h-[30px] rounded-xl">Submit</button>
+                  <button className="mr-1  bg-red-400 pl-4 pr-4 h-[30px] rounded-xl">Discard</button>
+                </div>
               </motion.div>
             )}
             {openCode && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { delay: 0.2 } }}
-                className={style.editor_container}>
-                <select className={style.select_lang} value={"language"}>
+                className={style.editor_container}
+              >
+                <div className="h-10 flex justify-between p-1 bg-[#282a36] text-white">
+                <select
+                  className={style.select_lang}
+                  defaultValue={selectedCodingLanguage}
+                  onChange={(e) => setSelectedCodingLanguage(e.target.value)}
+                >
                   <option>Javascript</option>
                   <option>Java</option>
                   <option>C#</option>
                   <option>C++</option>
                   <option>Go</option>
                 </select>
+                <div className="h-full ">
+                  <button className="mr-1  bg-green-400 pl-4 pr-4 h-full rounded-xl">Submit</button>
+                  <button className="mr-1  bg-red-400 pl-4 pr-4 h-full rounded-xl">Discard</button>
+                </div>
+                </div>
                 <CodeMirror
                   value={code}
                   height="71vh"
@@ -666,14 +683,14 @@ const Interview = () => {
                 />
               </motion.div>
             )}
-            {openCaption && (
+            {/* {openCaption && (
               <div className="absolute z-20 h-[300px] w-[500px] left-1/2 bottom-[70px]">
                 <CaptionBox caption={doneResponse} />
               </div>
-            )}
+            )} */}
             <div
               className={style.mid2}
-              data-isSide={openCode || openWhiteBoard || openCaption}
+              data-isside={openCode || openWhiteBoard || openCaption}
             >
               <motion.div
                 layout
@@ -699,14 +716,19 @@ const Interview = () => {
                 <span className="absolute bottom-4 left-5 bg-white pl-2 pr-2 rounded-full">
                   {"Candidate name"}
                 </span>
-                {(openCode || openWhiteBoard || openCaption) == false ? (
-                  <motion.div
-                    // drag
-                    // dragConstraints={parentRef}
-                    className={`${style.avatar} ${!responseTimer && testStarted == "yes"
-                        ? style.blue_border
-                        : ""
-                      }`}
+                <div
+                  // drag
+                  // dragConstraints={parentRef}
+                  style={
+                    (openCode || openWhiteBoard || openCaption) == false
+                      ? { display: "block" }
+                      : { display: "none" }
+                  }
+                  className={`${style.avatar} ${
+                    !responseTimer && testStarted == "yes"
+                      ? style.blue_border
+                      : ""
+                  }`}
                   // dragMomentum={true}
                   // style={{
                   //   x: position.x,
@@ -716,36 +738,34 @@ const Interview = () => {
                   //   const { x, y } = info.point;
                   //   snapToCorner(x, y);
                   // }}
+                >
+                  <span className="absolute top-3 left-[0.1rem] z-10 pl-2 pr-2 ">
+                    {!responseTimer && testStarted == "yes" ? (
+                      <Mic2 />
+                    ) : (
+                      <Mic />
+                    )}
+                  </span>
+                  <Canvas
+                    camera={{ position: [0, 2, 10], fov: 50 }}
+                    style={{
+                      backgroundColor: "whitesmoke",
+                      borderRadius: "6px",
+                    }}
+                    className={style.inner_avatar}
                   >
-                    <span className="absolute top-3 left-[0.1rem] z-10 pl-2 pr-2 ">
-                      {!responseTimer && testStarted == "yes" ? (
-                        <Mic2 />
-                      ) : (
-                        <Mic />
-                      )}
-                    </span>
-                    <Canvas
-                      camera={{ position: [0, 2, 10], fov: 50 }}
-                      style={{
-                        height: "180px",
-                        backgroundColor: "whitesmoke",
-                        width: "180px",
-                        borderRadius: "6px",
-                      }}
-                    >
-                      <OrbitControls enableRotate={false} />
-                      <Avatar
-                        position={[0, -1.5, 9] as THREE.Vector3Tuple}
-                        scale={2}
-                        text={text ? questions[response]?.question_text : ""}
-                      />
-                      <Environment preset="sunset" />
-                    </Canvas>
-                    <span className="absolute bottom-3 left-[3rem] z-10 bg-white pl-2 pr-2 rounded-full ">
-                      {"AI Avatar"}
-                    </span>
-                  </motion.div>
-                ) : null}
+                    <OrbitControls enableRotate={false} />
+                    <Avatar
+                      position={[0, -1.5, 9] as THREE.Vector3Tuple}
+                      scale={2}
+                      text={text ? questions[response]?.question_text : ""}
+                    />
+                    <Environment preset="sunset" />
+                  </Canvas>
+                  <span className="absolute bottom-3 left-[3rem] z-10 bg-white pl-2 pr-2 rounded-full ">
+                    {"AI Avatar"}
+                  </span>
+                </div>
               </motion.div>
               <motion.div
                 layout
@@ -772,14 +792,14 @@ const Interview = () => {
               <span onClick={handleCode}>
                 <Code />
               </span>
-              <span onClick={OpenCaptionBox}>
+              {/* <span onClick={OpenCaptionBox}>
                 <Image
                   src="/interview_screen/subtitles.png"
                   height={25}
                   width={25}
                   alt="caption"
                 />
-              </span>
+              </span> */}
             </div>
 
             <span onClick={handleOpenSetting}>

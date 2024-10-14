@@ -4,4 +4,4 @@ export const constStrings = {
     ISSUER: 'devsko'
 }
 
-export const baseUrl = "https://cffe-2405-201-403b-90ba-2539-994b-efcc-36.ngrok-free.app";
+export const baseUrl = "http://192.168.29.250:8000";

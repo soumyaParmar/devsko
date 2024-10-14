@@ -77,7 +77,7 @@
   @apply flex flex-row h-full w-full justify-between gap-7 relative border-black;
 }
 
-.mid2[data-isSide="true"] {
+.mid2[data-isside="true"] {
   @apply flex-col w-1/2 gap-3
 }
 
@@ -103,13 +103,20 @@
 }
 
 .whiteboard {
-  @apply w-2/3
+  @apply w-2/3 relative
 }
 
 .select_lang {
-  height: 5%;
+  @apply border-black bg-gray-500 rounded-xl ml-1 p-1;
 }
 
 .candidate_chat {
   @apply w-1/3
+}
+
+.inner_avatar{
+  @apply h-full w-full;
+}
+.inner_avatar canvas{
+  @apply !h-[180px] !w-[180px];
 }

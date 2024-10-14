@@ -19,6 +19,7 @@ import { ProfileUpdateProps } from "@/utils/Interfaces/Dashboard/ProfileUpdate";
 import profilePic from "@/assets/dashboard/profile-pic.png";
 import dollar_img from "@/assets/dashboard/dollar.png";
 import CreditCard from "@/components/Cards/CreditCard";
+import CircularProgressBar from "@/components/Progress_Bar/CircularProgressBar";
 import { logout } from "@/lib/logout";
 
 const Dashboard = () => {
@@ -97,12 +98,6 @@ const Dashboard = () => {
               >
                 Update your profile
               </button>
-              <button
-                className="w-full h-[3rem] text-white rounded-[1rem]  bg-[#176DEE] mt-[1rem]"
-                onClick={logout}
-              >
-                Log out
-              </button>
             </div>
 
             <div className=" flex flex-col gap-7 sticky top-12">
@@ -112,7 +107,9 @@ const Dashboard = () => {
                 </h4>
                 <div className="flex h-[80%]">
                   <div className="w-[50%]">
-                    <div className="w-[8rem] h-[8rem] border-[10px] rounded-full my-4 mx-2"></div>
+                    {/* <div className="w-[8rem] h-[8rem] border-[10px] rounded-full my-4 mx-2 p-0"> */}
+                      <CircularProgressBar />
+                    {/* </div> */}
                   </div>
                   <div className="flex flex-col gap-1 w-[50%]">
                     <p className="text-xs text-[#101010] font-[400]">
@@ -135,6 +132,12 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+            <button
+                className="w-full h-[3rem] text-white rounded-[1rem]  bg-[#176DEE] mt-[1rem]"
+                onClick={logout}
+              >
+                Log out
+              </button>
           </div>
           {/* middle section */}
           {!viewAll ? (

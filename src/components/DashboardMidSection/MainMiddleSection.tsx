@@ -5,7 +5,7 @@ import style from "@/styles/dashboard.module.css";
 // Cards component
 import EnrollCard from "../Cards/EnrollCard";
 import RecommandCard from "../Cards/RecommandCard";
-import TestCard from "../TestCard/TestCard";
+import TestCard from "../Cards/TestCard";
 // List of courses
 import { RecommandCourse } from "@/utils/Dashboard/RecommandCourse";
 import { EnrollCourse } from "@/utils/Dashboard/EnrollCourses";

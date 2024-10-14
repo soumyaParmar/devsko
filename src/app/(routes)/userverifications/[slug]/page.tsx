@@ -9,6 +9,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import FaceDetections from "@/common/FaceDetection/FaceDetection";
 import { useRouter } from "next/navigation";
+import { CircularProgress } from "@mui/material";
 
 type selectedButtonType =
   | "Permissions"
@@ -23,25 +24,24 @@ interface MediaDeviceInfoExtended extends MediaDeviceInfo {
   kind: MediaDeviceKind;
 }
 type allPermissionType = {
-  camera: boolean;
-  audio: boolean;
-  location: boolean;
-  fullScreen: boolean;
-  imageCaptured: boolean;
-  usersSpeech: boolean;
-  userFaces: boolean;
+  camera: boolean | 'loading';
+  audio: boolean | 'loading';
+  location: boolean | 'loading';
+  fullScreen: boolean | 'loading';
+  imageCaptured: boolean | 'loading';
+  usersSpeech: boolean | 'loading';
+  userFaces: boolean | 'loading';
 };
 
 const UserVerifications = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   const [open, setOpen] = React.useState(true);
   const [currentSelectedButton, setCurrentSelectedButton] =
     React.useState<selectedButtonType>("Permissions");
   const [image, setImage] = React.useState<boolean>(false);
-  const { transcript, resetTranscript } = useSpeechRecognition();
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
   const [recording, setRecording] = useState(false);
   const [faces, setFaces] = useState<number>(0);
   const [devices, setDevices] = useState<MediaDeviceInfoExtended[]>([]);
@@ -59,6 +59,7 @@ const UserVerifications = () => {
     userFaces: false,
   });
   const  [loadRoute, setLoadRoute] = useState<boolean>(false);
+  const { transcript, resetTranscript } = useSpeechRecognition();
 
   const route = useRouter();
 
@@ -144,10 +145,8 @@ const UserVerifications = () => {
     if(allPermission.audio &&  allPermission.camera && allPermission.fullScreen && allPermission.location && faces == 1){
       setLoadRoute(true)
       route.push('/interview/1')
-      setTimeout(()=>{
-        setLoadRoute(false) 
-      })  
-    } 
+      setLoadRoute(false) 
+    }
   };
 
   const getDevices = async () => {
@@ -213,32 +212,36 @@ const UserVerifications = () => {
   };
 
   const handleAudioPermission = async () => {
+    setAllPermission((prev)=>({...prev, audio: 'loading' }));
     try {
       const cameraPermission = await navigator.mediaDevices.getUserMedia({
         audio: true,
       });
       if (cameraPermission.active) {
-        setAllPermission({ ...allPermission, audio: true });
+        setAllPermission((prev)=>({...prev, audio: true }));
       }
     } catch (error) {}
   };
   const handleCameraPermission = async () => {
+    setAllPermission((prev)=>({...prev, camera: 'loading' }));
     try {
       const cameraPermission = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
       if (cameraPermission.active) {
-        setAllPermission({ ...allPermission, camera: true });
+        setAllPermission((prev)=>({...prev, camera: true }));
       }
     } catch (error) {}
   };
 
   const handleScreenPermission = () => {
+    setAllPermission((prev)=>({...prev, fullScreen: 'loading' }));
     document.documentElement.requestFullscreen();
-    setAllPermission({ ...allPermission, fullScreen: true });
+    setAllPermission((prev)=>({...prev, fullScreen: true }));
   };
 
   const handleLocationPermission = () => {
+    setAllPermission((prev)=>({...prev, location: 'loading' }));
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition, handleError, {
         enableHighAccuracy: true,
@@ -251,14 +254,14 @@ const UserVerifications = () => {
   };
 
   const showPosition = (position: GeolocationPosition) => {
-    setAllPermission({ ...allPermission, location: true });
+    setAllPermission((prev)=>({...prev, location: true }));
     console.log("Latitude : ", position.coords.latitude);
     console.log("Longitude : ", position.coords.longitude);
   };
 
   const handleError = (error: GeolocationPositionError) => {
     if (error.code) {
-      setAllPermission({ ...allPermission, location: false });
+      setAllPermission((prev)=>({...prev, location: false }));
     }
   };
 
@@ -276,6 +279,7 @@ const UserVerifications = () => {
         // actionBack={"Back"}
         // handlActionBack={handleBack}
         closable={false}
+        buttonDisable={!(allPermission.audio && allPermission.camera && allPermission.fullScreen && allPermission.location && faces == 1)}
       >
         <div className="flex h-full">
           <div className={style.left}>
@@ -293,7 +297,7 @@ const UserVerifications = () => {
               }
               onClick={() => setCurrentSelectedButton("Audio")}
             >
-              Audio
+              Audio/Image
             </button>
             <button
               className={
@@ -345,7 +349,7 @@ const UserVerifications = () => {
                         className={style.btn}
                         onClick={handleAudioPermission}
                       >
-                        {!allPermission.audio ? "Allow" : "✔"}
+                        {allPermission.audio  == 'loading'  ? (<CircularProgress size={'25px'}/>) : allPermission.audio ? "✔" : "Allow"}
                       </button>
                     </div>
                   </div>
@@ -365,7 +369,7 @@ const UserVerifications = () => {
                         className={style.btn}
                         onClick={handleCameraPermission}
                       >
-                        {!allPermission.camera ? "Allow" : "✔"}
+                        {allPermission.camera  == 'loading'  ? (<CircularProgress size={'25px'}/>) : allPermission.camera ? "✔" : "Allow"}
                       </button>
                     </div>
                   </div>
@@ -385,7 +389,7 @@ const UserVerifications = () => {
                         className={style.btn}
                         onClick={handleLocationPermission}
                       >
-                        {!allPermission.location ? "Allow" : "✔"}
+                        {allPermission.location  == 'loading'  ? (<CircularProgress size={'25px'}/>) : allPermission.location ? "✔" : "Allow"}
                       </button>
                     </div>
                   </div>
@@ -405,7 +409,7 @@ const UserVerifications = () => {
                         className={style.btn}
                         onClick={handleScreenPermission}
                       >
-                        {!allPermission.fullScreen ? "Allow" : "✔"}
+                        {allPermission.fullScreen  == 'loading'  ? (<CircularProgress size={'25px'}/>) : allPermission.fullScreen ? "✔" : "Allow"}
                       </button>
                     </div>
                   </div>
@@ -415,7 +419,7 @@ const UserVerifications = () => {
             {currentSelectedButton === "Audio" && (
               <div>
                 <h1 className={style.heading}>Audio & Image Sample</h1>
-                <div className="pb-5 border-b">
+                <div className="pb-5 border-b flex justify-between">
                   <div className="flex gap-[50px]">
                     <video
                       ref={videoRef}
@@ -431,9 +435,9 @@ const UserVerifications = () => {
                       }}
                     ></canvas>
                   </div>
-                  <button className={style.btn} onClick={handleCapture}>
+                  <div className="flex items-center"><button className={style.btn} onClick={handleCapture}>
                     Capture image
-                  </button>
+                  </button></div>
                 </div>
                 <div className="pt-4 flex border-b pb-5 w-full justify-between">
                   <div className="w-[75%]">
