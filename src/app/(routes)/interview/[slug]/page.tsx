@@ -140,8 +140,8 @@ const Interview = () => {
             response_duration: timer * 1000,
           },
         ];
-        const res = await postData("interview/responses", responsePayLoad);
-        console.log(res?.status);
+        // const res = await postData("interview/responses", responsePayLoad);
+        // console.log(res?.status);
 
         setDone(false);
       }

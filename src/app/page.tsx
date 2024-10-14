@@ -1,15 +1,17 @@
 "use client";
 
-import useAuthentication from "@/hooks/useAuthentication";
-import { CircularProgress } from "@mui/material";
+// import useAuthentication from "@/hooks/useAuthentication";
+// import { CircularProgress } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 
 export default function Home() {
-  const { handleGoogleSignIn, isAuthenticating } = useAuthentication();
+  const router = useRouter();
+  // const { handleGoogleSignIn, isAuthenticating } = useAuthentication();
 
-  if (isAuthenticating) {
-    return <div className="flex justify-center items-center h-screen"><CircularProgress /></div>
-  }
+  // if (isAuthenticating) {
+  //   return <div className="flex justify-center items-center h-screen"><CircularProgress /></div>
+  // }
 
   return (
     <main className="flex justify-center items-center h-full w-full">
@@ -20,13 +22,13 @@ export default function Home() {
           {(
             <div>
               <button
-                onClick={() => handleGoogleSignIn()}
+                onClick={() => router.push('/dashboard/1')}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full mb-4"
               >
                 Login with Google
               </button>
               <button
-                onClick={() => handleGoogleSignIn()}
+                onClick={() => router.push('/dashboard/1')}
                 className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded w-full"
               >
                 Login with GitHub
