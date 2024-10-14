@@ -242,8 +242,12 @@ const Interview = () => {
 
   useEffect(() => {
     const fetchTime = async () => {
-      const time = await getCurrentTime();
-      setCurrentTime(time);
+      // const time = await getCurrentTime();
+       setCurrentTime({
+        hour: "",
+        minutes: "",
+        suffix: "",
+      });
     };
 
     preferredMic = localStorage.getItem("preferredMic");
