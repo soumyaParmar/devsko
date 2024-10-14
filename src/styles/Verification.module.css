@@ -1,25 +1,45 @@
-.outer{
-    @apply flex justify-center items-center h-screen mt-[-90px];
+.main {
+  @apply p-0 m-0 h-[100vh] w-[100vw] border overflow-x-hidden flex flex-col;
 }
-.inner{
-    @apply h-2/3 w-[90%] flex flex-col gap-6
+
+.top {
+  @apply flex h-[11%] justify-between items-center border-b;
+  padding: 10px 25px;
 }
-.button1{
-    @apply text-red-300 text-xl
+
+.logo {
+  @apply text-xl font-semibold w-[200px];
 }
-.button2{
-    @apply text-green-400 text-xl
+
+.outer {
+  @apply flex w-full justify-center items-center h-[89%];
 }
-.selectBtn{
-    @apply text-[1rem] p-3 mt-1 border;
+.inner {
+  @apply h-2/3 w-[90%] flex flex-col gap-6;
 }
-.btn1{
-    @apply bg-green-500 mb-10;
-    padding: 5px 8px 5px 8px;
-    border-radius: 5px;
+.button1 {
+  @apply text-red-300 text-[1.1rem];
 }
-.btn2{
-    @apply bg-gray-500 text-gray-300 mb-10;
-    padding: 5px 8px 5px 8px;
-    border-radius: 5px;
+.button2 {
+  @apply text-green-400 text-[1.1rem];
 }
+.selectBtn {
+  @apply text-[1rem] p-1 mt-1 border;
+}
+.btn1 {
+  @apply bg-green-500 mb-10;
+  padding: 5px 8px 5px 8px;
+  border-radius: 5px;
+}
+.btn2 {
+  @apply bg-gray-500 text-gray-300;
+  padding: 5px 8px 5px 8px;
+  border-radius: 5px;
+}
+
+/* .video {
+  @apply w-[35rem] h-[25rem] bg-black object-fill rounded-md overflow-hidden;
+  border-radius: 20px;
+} */
+
+

@@ -1,5 +1,7 @@
-export interface ErrorPopUpProps {
-    errorPopup : boolean;
-    setErrorPopup?: React.Dispatch<React.SetStateAction<boolean>>;
-    errorMsg : string;
+export interface PopUpProps {
+    isVisible : boolean;
+    onClose: () => void;
+    message : string;
+    isWarning?: boolean;
+    type: 'Error' | 'Warning'
 }

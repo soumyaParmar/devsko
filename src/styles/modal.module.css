@@ -1,0 +1,4 @@
+.modalTitle .ant-modal-title{
+    /* color: yellow !important; */
+    @apply text-red-300 border-b-2;
+}

@@ -1,0 +1,32 @@
+.cardContainer{
+    @apply w-[32%] h-auto rounded-[1rem] bg-white p-2;
+}
+
+.top{
+    @apply w-full h-auto rounded-[1rem] p-2 bg-[#A8D8FF];
+}
+
+.test_type{
+    @apply text-[#5B617A] bg-white py-1 px-2 rounded-[2rem] text-[0.75rem];
+}
+
+.test_name{
+    @apply w-[17rem] text-[#101010] text-[1.3rem] font-[500] mt-3 mb-4 ;
+}
+
+.test_desc{
+    @apply text-left text-[0.75rem] text-[#5B617A] mb-3;
+}
+
+.bottom{
+    @apply w-full h-[24%] flex justify-between  items-center mb-3;
+}
+
+.test_price{
+    @apply flex flex-col gap-[0.1rem];
+}
+
+.btn{
+    @apply text-white rounded-[2rem] bg-[#176DEE] px-3 py-1 h-[2rem] text-[0.85rem] text-center;
+
+}

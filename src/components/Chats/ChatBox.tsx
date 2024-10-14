@@ -3,16 +3,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChatType } from "@/utils/Interfaces/Interview/interview";
 import Image from "next/image";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from "../../styles/chat.module.css";
 
 type chatProps = {
   chats: ChatType[];
   liveChat: string;
+  liveQuestion : string;
 };
 
-const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
+const ChatBox: React.FC<chatProps> = ({ chats, liveChat, liveQuestion }) => {
  const divRef = useRef<HTMLDivElement>(null);
+ const [displayedText, setDisplayedText] = useState<string>('');
 
  useEffect(() => {
   if (divRef.current) {
@@ -29,7 +31,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
             <div key={index} style={{ padding: "20px 10px 0 10px" }}>
               {/* question box */}
               <div>
-                {item.question && (
+                {item.question ? (
                   <>
                     <div className="flex gap-2 mt-5">
                       <Image
@@ -40,7 +42,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="h-[30px] mt-1"
                       />
                       <div>
-                      <span
+                      <p
                         style={{
                           borderRadius: "20px 20px 20px 2px",
                           whiteSpace: "none",
@@ -48,7 +50,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="bg-white h-auto p-[6px] text-black text-sm"
                       >
                         {`${item.question} `}
-                        </span>
+                        </p>
 
                         <div className="text-[10px] relative left-[1px] pt-1 pl-1 text-gray-400">
                           {item.timeStamp
@@ -69,12 +71,38 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                       </div>
                     </div>
                   </>
-                )}
+                ):(
+                  <>
+                  { liveQuestion && (
+                    <div className="flex gap-2 mt-5">
+                    <Image
+                      src="/interviewer.webp"
+                      alt="interviewer"
+                      width={30}
+                      height={30}
+                      className="h-[30px] mt-1"
+                    />
+                    <div>
+                    <p
+                      style={{
+                        borderRadius: "20px 20px 20px 2px",
+                        whiteSpace: "none",
+                      }}
+                      className="bg-white h-auto p-[6px] text-black text-sm"
+                    >
+                      {`${liveQuestion} `}
+                      </p>
+                    </div>
+                  </div>
+                  )}
+                  </>
+                )
+                }
               </div>
 
               {/* response box */}
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                {item.response && !liveChat ? (
+                {item.response  ? (
                   <>
                     <div className="flex gap-2 flex-row-reverse">
                       <Image
@@ -85,7 +113,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="h-[25px] rounded-full mt-1"
                       />
                       <div>
-                      <span
+                      <p
                         style={{
                           borderRadius: "20px 20px 2px 20px",
                           whiteSpace: "none",
@@ -94,7 +122,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                         className="text-white bg-blue-600 p-[6px] h-auto text-sm"
                       >
                         {`${item.response} `}
-                        </span>
+                        </p>
                         <div className="text-[10px] relative left-[1px] pt-1 pl-1 text-gray-400">
                           {item.timeStamp
                             ? new Date(item.timeStamp).toLocaleString("en-US", {
@@ -118,7 +146,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                   </>
                 ) : (
                   <>
-                    {liveChat && !item.response && (
+                    {index == chats.length - 1 && liveChat  && (
                       <div className="flex gap-2 pt-3 flex-row-reverse">
                         <Image
                           src="/user.png"
@@ -127,7 +155,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                           height={30}
                           className="h-[25px] rounded-full mt-1"
                         />
-                        <span
+                        <p
                           style={{
                             borderRadius: "20px 20px 2px 20px",
                             whiteSpace: "none",
@@ -136,7 +164,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat }) => {
                           className="text-white bg-blue-600 p-[6px] h-auto text-sm"
                         >
                           {`${liveChat} `}
-                        </span>
+                        </p>
                       </div>
                     )}
                   </>

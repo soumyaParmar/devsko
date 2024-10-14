@@ -38,7 +38,6 @@ const Verification = () => {
   useEffect(() => {
     console.log("Rendered");
     localStorage.clear();
-    console.log(window.localStorage);
   }, []);
 
   useEffect(() => {
@@ -66,7 +65,7 @@ const Verification = () => {
       setBrowserCheck(true);
     }
 
-    navigator.mediaDevices.ondevicechange = getDevices; // automatically detects external devices without refresh
+    navigator.mediaDevices.ondevicechange = getDevices;
 
     return () => {
       if (videoStreamRef.current) {
@@ -83,7 +82,7 @@ const Verification = () => {
       const audioContext = new AudioContext();
       setAudioContext(audioContext);
       startMicTest(audioContext);
-      localStorage.setItem("preferredMic", selectedMic)
+      localStorage.setItem("preferredMic", selectedMic);
     }
   }, [selectedMic]);
 
@@ -106,7 +105,6 @@ const Verification = () => {
         }
         localStorage.setItem("preferredCamera", selectedCamera);
       }
-
     };
 
     startCameraPreview();
@@ -114,7 +112,6 @@ const Verification = () => {
 
   // Function to test microphone input and display audio levels
   const startMicTest = async (audioCtx: AudioContext) => {
-    console.log(window.localStorage);
     try {
       if (selectedMic) {
         console.log(selectedMic);
@@ -179,16 +176,22 @@ const Verification = () => {
   // Function to fetch devices
   const getDevices = async () => {
     try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+
       const deviceList = await navigator.mediaDevices.enumerateDevices();
       setDevices(deviceList as MediaDeviceInfoExtended[]);
-      // console.log(deviceList);
 
       // Automatically select the first available microphone, camera, and speaker
       const defaultMic = deviceList.find(
-        (device) => device.kind === "audioinput"
+        (device) =>
+          device.deviceId === stream.getAudioTracks()[0].getSettings().deviceId
       );
       const defaultCamera = deviceList.find(
-        (device) => device.kind === "videoinput"
+        (device) =>
+          device.deviceId === stream.getVideoTracks()[0].getSettings().deviceId
       );
       const defaultSpeaker = deviceList.find(
         (device) => device.kind === "audiooutput"
@@ -200,7 +203,6 @@ const Verification = () => {
 
       localStorage.setItem("preferredCamera", defaultCamera?.deviceId ?? "");
       localStorage.setItem("preferredMic", defaultMic?.deviceId ?? "");
-      // localStorage.setItem("preferredSpeaker", defaultSpeaker.deviceId);
     } catch (err) {
       console.error("Error fetching devices:", err);
       setError(
@@ -216,7 +218,7 @@ const Verification = () => {
         video: true,
         audio: true,
       });
-      await getDevices(); //get available devices on the system
+      await getDevices(); // to get available devices on the system
       if (videoStream.active) {
         videoStreamRef.current = videoStream;
         setCameraPermission(true);
@@ -244,240 +246,260 @@ const Verification = () => {
   };
 
   const handleStartTest = () => {
-    navigate.push("/interview");
+    navigate.push("/interview/1");
   };
 
   return (
     <>
-      <div className={` ${style.outer}`}>
-        <div className={` ${style.inner}`}>
-          <h1 className="text-2xl font-semibold">
-            Required permission to start your test.
-          </h1>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {/* required permission div */}
-          <div className="flex justify-between">
-            <div>
-              {/* for full screen */}
-              <div>
-                {!fullScreen ? (
-                  <button className={style.button1} onClick={handleFullscreen}>
-                    Click here to allow full screen
-                    <span className="pl-8 font-bold text-red-600">x</span>
-                  </button>
-                ) : (
-                  <button
-                    className={style.button2}
-                    onClick={handleExitFullscreen}
-                  >
-                    Exit full screen{" "}
-                    <span className="pl-8 font-bold text-green-600">
-                      &#10003;
-                    </span>
-                  </button>
-                )}
-              </div>
+      <div className={style.main}>
+        <div className={style.top}>
+          <div className={style.logo}>DevSko</div>
+        </div>
 
-              {/* for extended screen */}
+        <div className={` ${style.outer} border `}>
+          <div className={` ${style.inner}`}>
+            <h1 className="text-[1.7rem] font-semibold text-center mt-[-90px]">
+              Required permission to start your test.
+            </h1>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {/* required permission div */}
+            <div className="flex justify-between">
               <div>
-                {isExtendedScreen ? (
-                  <p className={style.button1}>
-                    Second screen found. Please remove other screen.{" "}
-                    <span className="pl-8 font-bold text-red-600">x</span>
-                  </p>
-                ) : (
-                  <p className={style.button2}>
-                    No second screen detected{" "}
-                    <span className="pl-8 font-bold text-green-600">
-                      &#10003;
-                    </span>
-                  </p>
-                )}
-              </div>
+                {/* for full screen */}
+                <div>
+                  {!fullScreen ? (
+                    <button
+                      className={style.button1}
+                      onClick={handleFullscreen}
+                    >
+                      Click here to allow full screen
+                      <span className="pl-8 font-bold text-red-600">x</span>
+                    </button>
+                  ) : (
+                    <button
+                      className={style.button2}
+                      onClick={handleExitFullscreen}
+                    >
+                      Exit full screen{" "}
+                      <span className="pl-8 font-bold text-green-600">
+                        &#10003;
+                      </span>
+                    </button>
+                  )}
+                </div>
 
-              {/* for preferred browser */}
-              <div>
-                {browserCheck ? (
-                  <p className={style.button2}>
-                    Browser detected{" "}
-                    <span className="pl-8 font-bold text-green-600">
-                      &#10003;
-                    </span>{" "}
-                  </p>
-                ) : (
-                  <p className={style.button1}>
-                    Unsupprted browser detected{" "}
-                    <span className="pl-8 font-bold text-red-600">x</span>
-                  </p>
-                )}
-              </div>
+                {/* for extended screen */}
+                <div>
+                  {isExtendedScreen ? (
+                    <p className={style.button1}>
+                      Second screen found. Please remove other screen.{" "}
+                      <span className="pl-8 font-bold text-red-600">x</span>
+                    </p>
+                  ) : (
+                    <p className={style.button2}>
+                      No second screen detected{" "}
+                      <span className="pl-8 font-bold text-green-600">
+                        &#10003;
+                      </span>
+                    </p>
+                  )}
+                </div>
 
-              {/* for face detection */}
-              <div>
-                {!faces && (
-                  <p className={style.button1}>
-                    No face detected{" "}
-                    <span className="pl-8 font-bold text-red-600">x</span>
-                  </p>
-                )}
-                {faces == 1 && (
-                  <p className={style.button2}>
-                    Face detected{" "}
-                    <span className="pl-8 font-bold text-green-600">
-                      &#10003;
-                    </span>{" "}
-                  </p>
-                )}
-                {faces > 1 && (
-                  <p className={style.button1}>
-                    Multiple faces detected. Please go solo{" "}
-                    <span className="pl-8 font-bold text-red-600">x</span>
-                  </p>
-                )}
-              </div>
+                {/* for preferred browser */}
+                <div>
+                  {browserCheck ? (
+                    <p className={style.button2}>
+                      Browser detected{" "}
+                      <span className="pl-8 font-bold text-green-600">
+                        &#10003;
+                      </span>{" "}
+                    </p>
+                  ) : (
+                    <p className={style.button1}>
+                      Unsupprted browser detected{" "}
+                      <span className="pl-8 font-bold text-red-600">x</span>
+                    </p>
+                  )}
+                </div>
 
-              {/* for camera and microphone */}
-              <div>
+                {/* for face detection */}
+                <div>
+                  {!faces && (
+                    <p className={style.button1}>
+                      No face detected{" "}
+                      <span className="pl-8 font-bold text-red-600">x</span>
+                    </p>
+                  )}
+                  {faces == 1 && (
+                    <p className={style.button2}>
+                      Face detected{" "}
+                      <span className="pl-8 font-bold text-green-600">
+                        &#10003;
+                      </span>{" "}
+                    </p>
+                  )}
+                  {faces > 1 && (
+                    <p className={style.button1}>
+                      Multiple faces detected. Please go solo{" "}
+                      <span className="pl-8 font-bold text-red-600">x</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* for camera and microphone */}
+                <div>
+                  {cameraPermission ? (
+                    <p className={style.button2}>
+                      Camera and microphone access granted.
+                      <span className="pl-8 font-bold text-green-600">
+                        &#10003;
+                      </span>
+                    </p>
+                  ) : (
+                    <p className={style.button1}>
+                      Camera and microphone access not granted.
+                      <span className="pl-8 font-bold text-red-600">x</span>
+                    </p>
+                  )}
+                </div>
+
                 {cameraPermission ? (
-                  <p className={style.button2}>
-                    Camera and microphone access granted.
-                    <span className="pl-8 font-bold text-green-600">
-                      &#10003;
-                    </span>
-                  </p>
-                ) : (
-                  <p className={style.button1}>
-                    Camera and microphone access not granted.
-                    <span className="pl-8 font-bold text-red-600">x</span>
-                  </p>
-                )}
-              </div>
+                  <>
+                    <h5 className="text-xl mt-3 font-light">
+                      Choose desired device
+                    </h5>
 
-              {cameraPermission ? (
-                <>
-                  <h5 className="text-xl mt-3 font-light">
-                    Choose desired device
-                  </h5>
+                    {/*for Camera selection */}
+                    <div>
+                      <label className={style.button2}>Select Camera:</label>{" "}
+                      <br />
+                      <select
+                        value={selectedCamera || ""}
+                        onChange={(e) => {
+                          setSelectedCamera(e.target.value);
+                          // localStorage.setItem("preferredCamera", e.target.value);
+                        }}
+                        className={style.selectBtn}
+                      >
+                        {devices
+                          .filter((device) => device.kind === "videoinput")
+                          .map((device) => (
+                            <option
+                              key={device.deviceId}
+                              value={device.deviceId}
+                            >
+                              {device.label || `Camera ${device.deviceId}`}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
 
-                  {/*for Camera selection */}
-                  <div>
-                    <label className={style.button2}>Select Camera:</label>{" "}
-                    <br />
-                    <select
-                      value={selectedCamera || ""}
-                      onChange={(e) => {
-                        setSelectedCamera(e.target.value);
-                        // localStorage.setItem("preferredCamera", e.target.value);
-                      }}
-                      className={style.selectBtn}
-                    >
-                      {devices
-                        .filter((device) => device.kind === "videoinput")
-                        .map((device) => (
-                          <option key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Camera ${device.deviceId}`}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  {/* for Microphone selection */}
-                  <div>
-                    <label className={style.button2}>Select Microphone:</label>{" "}
-                    <br />
-                    <select
-                      value={selectedMic || ""}
-                      onChange={(e) => {
-                        setSelectedMic(e.target.value);
-                        // localStorage.setItem("preferredMic", e.target.value);
-                      }}
-                      className={`mb-3 ${style.selectBtn}`}
-                    >
-                      {devices
-                        .filter((device) => device.kind === "audioinput")
-                        .map((device) => (
-                          <option key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Microphone ${device.deviceId}`}
-                          </option>
-                        ))}
-                    </select>
-                    {/* Audio level indicator */}
-                    <div
-                      style={{
-                        width: "200px",
-                        height: "20px",
-                        background: "#ccc",
-                        position: "relative",
-                        overflow: "hidden",
-                      }}
-                    >
+                    {/* for Microphone selection */}
+                    <div>
+                      <label className={style.button2}>
+                        Select Microphone:
+                      </label>{" "}
+                      <br />
+                      <select
+                        value={selectedMic || ""}
+                        onChange={(e) => {
+                          setSelectedMic(e.target.value);
+                          // localStorage.setItem("preferredMic", e.target.value);
+                        }}
+                        className={`mb-3 ${style.selectBtn}`}
+                      >
+                        {devices
+                          .filter((device) => device.kind === "audioinput")
+                          .map((device) => (
+                            <option
+                              key={device.deviceId}
+                              value={device.deviceId}
+                            >
+                              {device.label || `Microphone ${device.deviceId}`}
+                            </option>
+                          ))}
+                      </select>
+                      {/* Audio level indicator */}
                       <div
                         style={{
-                          width: `${microphoneLevel}%`,
-                          height: "100%",
-                          background: microphoneLevel > 5 ? "green" : "gray",
-                          position: "absolute",
-                          left: 0,
-                          transition: "width 0.1s linear",
+                          width: "200px",
+                          height: "20px",
+                          background: "#ccc",
+                          position: "relative",
+                          overflow: "hidden",
                         }}
-                      />
+                      >
+                        <div
+                          style={{
+                            width: `${microphoneLevel}%`,
+                            height: "100%",
+                            background: microphoneLevel > 5 ? "green" : "gray",
+                            position: "absolute",
+                            left: 0,
+                            transition: "width 0.1s linear",
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* for Speaker selection */}
-                  <div>
-                    <label className={style.button2}>
-                      Select Speaker (Headphones):
-                    </label>{" "}
-                    <br />
-                    <select
-                      value={selectedSpeaker || ""}
-                      onChange={(e) => {
-                        setSelectedSpeaker(e.target.value);
-                        // localStorage.setItem(
-                        //   "preferredSpeaker",
-                        //   e.target.value
-                        // );
-                      }}
-                      className={style.selectBtn}
-                    >
-                      {devices
-                        .filter((device) => device.kind === "audiooutput")
-                        .map((device) => (
-                          <option key={device.deviceId} value={device.deviceId}>
-                            {device.label || `Speaker ${device.deviceId}`}
-                          </option>
-                        ))}
-                    </select>
-                    <br />
-                    <button
-                      onClick={testSpeaker}
-                      className={`mt-3 ${style.btn1}`}
-                    >
-                      Test Speaker
-                    </button>
-                  </div>
-                </>
+                    {/* for Speaker selection */}
+                    <div>
+                      <label className={style.button2}>
+                        Select Speaker (Headphones):
+                      </label>{" "}
+                      <br />
+                      <select
+                        value={selectedSpeaker || ""}
+                        onChange={(e) => {
+                          setSelectedSpeaker(e.target.value);
+                          // localStorage.setItem(
+                          //   "preferredSpeaker",
+                          //   e.target.value
+                          // );
+                        }}
+                        className={style.selectBtn}
+                      >
+                        {devices
+                          .filter((device) => device.kind === "audiooutput")
+                          .map((device) => (
+                            <option
+                              key={device.deviceId}
+                              value={device.deviceId}
+                            >
+                              {device.label || `Speaker ${device.deviceId}`}
+                            </option>
+                          ))}
+                      </select>
+                      <br />
+                      <button
+                        onClick={testSpeaker}
+                        className={`mt-3 ${style.btn1}`}
+                      >
+                        Test Speaker
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div>
+                {cameraPermission && <FaceDetections setFaces={setFaces}/>}
+              </div>
+            </div>
+
+            {/* button for starting the test */}
+            <div>
+              {allPermission ? (
+                <button className={` ${style.btn1}`} onClick={handleStartTest}>
+                  Go to next screen
+                </button>
               ) : (
-                ""
+                <button className={style.btn2}>
+                  All permissions required to go to next
+                </button>
               )}
             </div>
-            <div>
-              {cameraPermission && <FaceDetections setFaces={setFaces} />}
-            </div>
-          </div>
-
-          {/* button for starting the test */}
-          <div>
-            {allPermission ? (
-              <button className={` ${style.btn1}`} onClick={handleStartTest}>
-                Go to next screen
-              </button>
-            ) : (
-              <button className={style.btn2}>
-                All permissions required to go to next
-              </button>
-            )}
           </div>
         </div>
       </div>

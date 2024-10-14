@@ -2,20 +2,23 @@
 import { Camera } from '@mediapipe/camera_utils';
 import { FaceDetection } from '@mediapipe/face_detection';
 import { useEffect, useRef } from 'react';
+import style from "@/styles/Verification.module.css";
 
 type FaceProps = {
-  setFaces : (value : number) => void
-}
+  setFaces: (value: number) => void;
+};
 
-
-const FaceDetections:React.FC<FaceProps> = ({setFaces}) => {
+const FaceDetections: React.FC<FaceProps> = ({ setFaces }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const faceDetectionRef = useRef<FaceDetection | null>(null);
+  const cameraRef = useRef<Camera | null>(null);
 
   useEffect(() => {
     const videoElement = videoRef.current;
 
-    if(!videoElement) return;
+    if (!videoElement) return;
 
+    // Initialize FaceDetection
     const faceDetection = new FaceDetection({
       locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
     });
@@ -26,28 +29,43 @@ const FaceDetections:React.FC<FaceProps> = ({setFaces}) => {
     });
 
     faceDetection.onResults((results: any) => {
-      setFaces(results.detections.length);
+      setFaces(results.detections?.length || 0);
     });
 
+    faceDetectionRef.current = faceDetection;
+
+    // Initialize Camera
     const camera = new Camera(videoElement, {
       onFrame: async () => {
-        await faceDetection.send({ image: videoElement });
+        try {
+          if (faceDetectionRef.current && videoElement) {
+            await faceDetectionRef.current.send({ image: videoElement });
+          }
+        } catch (error) {
+          console.error("Error during face detection:", error);
+        }
       },
       width: 1280,
       height: 720,
     });
 
     camera.start();
+    cameraRef.current = camera;
 
     return () => {
-      camera.stop();
-      faceDetection.close();
+      // Clean up camera and face detection when component unmounts
+      cameraRef.current?.stop();
+      faceDetectionRef.current?.close().catch((error) => {
+        console.error("Error closing face detection:", error);
+      });
+      cameraRef.current = null;
+      faceDetectionRef.current = null;
     };
-  }, []);
+  }, [setFaces]);
 
   return (
-    <div>
-      <video ref={videoRef} autoPlay></video>
+    <div className={style.video}>
+      <video ref={videoRef} autoPlay muted playsInline></video>
     </div>
   );
 };

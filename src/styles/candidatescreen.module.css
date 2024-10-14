@@ -1,6 +1,10 @@
-.webcam{
-    @apply h-full w-full
+.webcam {
+  @apply h-full ;
 }
-.webcam video{
-    @apply w-full h-full border-4 border-gray-300 rounded-2xl
+.video1 {
+  @apply w-full h-full border-4 border-gray-300 rounded-2xl object-cover;
+}
+
+.blue_border {
+  @apply border-4 border-blue-800;
 }

@@ -1,0 +1,17 @@
+.card_container{
+    @apply w-[20rem] h-full border rounded-[1rem]
+}
+.top{
+    @apply h-[50%] overflow-hidden w-full ;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+.top img{
+    @apply object-cover w-full h-full;
+}
+
+.bottom{
+    @apply h-[50%] border-black w-full flex flex-col p-4;
+}
+
+

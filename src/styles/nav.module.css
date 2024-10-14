@@ -1,0 +1,15 @@
+.nav{
+    @apply flex justify-between items-center h-[10%] p-2 border-b bg-white sticky top-0 z-10;
+}
+.nav img{
+    @apply w-[40px] h-[40px] object-cover;
+}
+.logo{
+    @apply text-2xl font-bold
+}
+.mid{
+    @apply flex gap-5 text-base text-gray-400
+}
+.left{
+    @apply flex gap-4 items-center
+}

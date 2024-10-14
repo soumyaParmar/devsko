@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { StateSetter } from "@/utils/types/statesetter";
@@ -7,7 +8,10 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import Webcam from "react-webcam";
 import style from "../../styles/candidatescreen.module.css";
-import { testStartType } from "@/app/(routes)/interview/page";
+import { FaceDetection } from "@mediapipe/face_detection";
+// import Popup from "../Modal/Modal";
+import { Camera } from "@mediapipe/camera_utils";
+import { testStartType } from "@/app/(routes)/interview/[slug]/page";
 
 interface PassedProps {
   speechDone: boolean;
@@ -18,7 +22,8 @@ interface PassedProps {
   setText: StateSetter<boolean>;
   setUnsupported: StateSetter<boolean>;
   setUsersBlankAnswer: StateSetter<boolean>;
-  testStarted:testStartType | undefined;
+  testStarted: testStartType | undefined;
+  responseTimer: boolean;
 }
 
 const CandidateScreen: React.FC<PassedProps> = (props) => {
@@ -31,7 +36,8 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     setText,
     setUnsupported,
     setUsersBlankAnswer,
-    testStarted
+    testStarted,
+    responseTimer,
   } = props;
   const webcamRef = useRef<Webcam | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -42,6 +48,12 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [pauseTriggered, setPauseTriggered] = useState<boolean>(false);
   const [repeatHandled, setRepeatHandled] = useState<boolean>(false);
+  const faceDetectionRef = useRef<FaceDetection | null>(null);
+
+  const [isMultipleFaceDetected, setMultipleFaceDetected] =
+    useState<boolean>(false);
+
+  const [faces, setFaces] = useState(0);
   const {
     transcript,
     listening,
@@ -49,8 +61,55 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
 
+  // const videoRef = useRef<HTMLVideoElement>(null);
+
+  // for face detection
   useEffect(() => {
-    if (speechDone && testStarted=="yes") {
+    const videoElement = webcamRef.current?.video;
+    if (!videoElement) return;
+
+    faceDetectionRef.current = new FaceDetection({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+    });
+
+    faceDetectionRef.current.setOptions({
+      model: "short",
+      minDetectionConfidence: 0.5,
+    });
+
+    faceDetectionRef.current.onResults((results) => {
+      setFaces(results.detections.length);
+    });
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        if (faceDetectionRef.current) { // Ensure it's still valid
+          await faceDetectionRef.current.send({ image: videoElement });
+        }
+      },
+      width: 1280,
+      height: 720,
+    });
+
+    camera.start();
+
+    return () => {
+      camera.stop();
+      if (faceDetectionRef.current) {
+        faceDetectionRef.current.close(); // Clean up the instance
+        faceDetectionRef.current = null; // Set it to null to avoid stale references
+      }
+      // Stop the media tracks properly
+      const stream = webcamRef.current?.stream;
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (speechDone && testStarted == "yes") {
       SpeechRecognition.startListening({ continuous: true });
       resetTranscript();
       setDoneResponse("");
@@ -58,30 +117,39 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
       setText(false);
       setSpeechDone(false);
     }
-  }, [speechDone,testStarted]);
+  }, [speechDone, testStarted]);
 
   useEffect(() => {
     if (listening) {
       setDoneResponse(transcript);
     }
 
-    if (listening && transcript !== lastTranscript && transcript.length > 10 ) {
-      speechTimer(handleTranscriptPause,6000);
+    if (listening && transcript !== lastTranscript && transcript.length > 10) {
+      speechTimer(handleTranscriptPause, 6000);
       setLastTranscript(transcript);
       setPauseTriggered(false);
       setRepeatHandled(false);
     }
 
-    if(listening && transcript.length < 10 && transcript.toLowerCase().includes('repeat') && !repeatHandled){
+    if (
+      listening &&
+      transcript.length < 10 &&
+      transcript.toLowerCase().includes("repeat") &&
+      !repeatHandled
+    ) {
       setRepeatHandled(true);
-      speechTimer(()=>{
+      speechTimer(() => {
         handleUserNotSpeaking();
         setRepeatHandled(true);
-      },7000)
-
+      }, 7000);
     }
 
-    if(listening && transcript.length < 10 && transcript.toLowerCase().includes('sorry') && !pauseTriggered ){
+    if (
+      listening &&
+      transcript.length < 10 &&
+      transcript.toLowerCase().includes("sorry") &&
+      !pauseTriggered
+    ) {
       speechTimer(() => {
         handleTranscriptPause();
         setPauseTriggered(true);
@@ -93,34 +161,36 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     };
   }, [listening, transcript]);
 
-  useEffect(()=>{
+  useEffect(() => {
+    if (faces > 1) setMultipleFaceDetected(true);
+  }, [faces]);
 
-    if(testStarted=='yes'){
+  useEffect(() => {
+    if (testStarted == "yes") {
       handleRecordingFromStart();
-    }else if(testStarted == 'end'){
+    } else if (testStarted == "end") {
       handleRecordingWhenEnds();
     }
+  }, [testStarted]);
 
-  },[testStarted])
+  const speechTimer = (fun: () => void, time: number) => {
+    if (timer) clearTimeout(timer);
 
-  const speechTimer = (fun:()=>void,time:number) =>{
-    if(timer) clearTimeout(timer);
-
-    const newTimer = setTimeout (()=>{
+    const newTimer = setTimeout(() => {
       fun();
-    },time)
+    }, time);
 
-    setTimer(newTimer)
-  }
+    setTimer(newTimer);
+  };
 
-  const handleUserNotSpeaking = () =>{
+  const handleUserNotSpeaking = () => {
     setUsersBlankAnswer(true);
     setText(true);
     setDoneResponse("");
     setLastTranscript("");
     resetTranscript();
     SpeechRecognition.stopListening();
-  }
+  };
 
   const handleTranscriptPause = () => {
     setDone(true);
@@ -152,7 +222,7 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
   };
 
   const handleRecordingWhenEnds = () => {
-    if(timer) clearTimeout(timer);
+    if (timer) clearTimeout(timer);
     setText(false);
     setSpeechDone(false);
     resetTranscript();
@@ -175,14 +245,35 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
     // route.push('/dashboard');
   };
 
+  // const handleClose = () => {
+  //   setMultipleFaceDetected(false);
+  // };
+
   if (!browserSupportsSpeechRecognition) {
     setUnsupported(true);
   }
 
   return (
-    <div className={style.webcam}>
-        <Webcam ref={webcamRef} />
-    </div>
+    <>
+      {isMultipleFaceDetected && (<></>
+        // <Popup
+        //   isVisible={isMultipleFaceDetected}
+        //   message="Multiple Faces are detected"
+        //   onClose={handleClose}
+        //   isWarning={true}
+        //   type="Warning"
+        // />
+      )}
+      <div className={`${style.webcam}`}>
+        <Webcam
+          ref={webcamRef}
+          audio={false}
+          className={`${style.video1} ${
+            responseTimer && testStarted == "yes" ? style.blue_border : ""
+          }`}
+        />
+      </div>
+    </>
   );
 };
 
