@@ -64,10 +64,10 @@ const useAuthentication = () => {
     }, [router])
 
     const handleGoogleSignIn = () => {
-        const googleClientId = process.env.NEXT_PUBLIC_CLIENT_ID;
-        const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
+        const googleClientId = 'http://localhost:3000';
+        const redirectUri = '167785469244-8ke55182fabc5eictu1gert1qo5s5f6g.apps.googleusercontent.com';
         // Construct the Google OAuth URL
-        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${googleClientId}&redirect_uri=${redirectUri}&scope=openid%20profile%20email`;
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${redirectUri}&redirect_uri=${googleClientId}&scope=openid%20profile%20email`;
         // Redirect the user to Google OAuth2 login page
         window.location.href = googleAuthUrl;
     };
