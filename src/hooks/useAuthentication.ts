@@ -64,7 +64,7 @@ const useAuthentication = () => {
     }, [router])
 
     const handleGoogleSignIn = () => {
-        const googleClientId = 'http://localhost:3000';
+        const googleClientId = 'https://projectdevs.netlify.app';
         const redirectUri = '167785469244-8ke55182fabc5eictu1gert1qo5s5f6g.apps.googleusercontent.com';
         // Construct the Google OAuth URL
         const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${redirectUri}&redirect_uri=${googleClientId}&scope=openid%20profile%20email`;
