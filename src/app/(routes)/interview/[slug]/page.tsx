@@ -122,13 +122,13 @@ const Interview = () => {
   // for setting up the response
   useEffect(() => {
     const fetchResponse = async () => {
-      const utc_time = await handleTimeApi();
+      // const utc_time = await handleTimeApi();
       if (done) {
         setAllChat((prev) => [
           ...prev,
           {
             response: doneResponse,
-            timeStamp: utc_time || new Date(),
+            // timeStamp: utc_time || new Date(),
           },
         ]);
         responsePayLoad = [
@@ -173,7 +173,7 @@ const Interview = () => {
   // for text-to-speech and setting up the time stamp
   useEffect(() => {
     const fetchResponse = async () => {
-      const utc_time = await handleTimeApi();
+      // const utc_time = await handleTimeApi();
 
       if ("speechSynthesis" in window && text && testStarted != "end") {
         const utterance = new SpeechSynthesisUtterance(
@@ -188,7 +188,7 @@ const Interview = () => {
             ...prev,
             {
               question: questions[response]?.question_text,
-              timeStamp: utc_time || new Date(),
+              // timeStamp: utc_time || new Date(),
             },
           ]);
         };

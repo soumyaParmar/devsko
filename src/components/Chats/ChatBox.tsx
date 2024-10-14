@@ -31,7 +31,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat, liveQuestion }) => {
             <div key={index} style={{ padding: "20px 10px 0 10px" }}>
               {/* question box */}
               <div>
-                {item.question ? (
+                {item.question &&  (
                   <>
                     <div className="flex gap-2 mt-5">
                       <Image
@@ -51,50 +51,8 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat, liveQuestion }) => {
                       >
                         {`${item.question} `}
                         </p>
-
-                        <div className="text-[10px] relative left-[1px] pt-1 pl-1 text-gray-400">
-                          {item.timeStamp
-                            ? new Date(item.timeStamp).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })
-                            : "No time available"}
-                          {/* for setting the intnernational time zones */}
-                          {/* {item.timeStamp
-                            ? new Intl.DateTimeFormat("en-US", {
-                                timeZone: "Europe/London",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }).format(new Date(item.timeStamp))
-                            : "No time available"} */}
-                        </div>
                       </div>
                     </div>
-                  </>
-                ):(
-                  <>
-                  { liveQuestion && (
-                    <div className="flex gap-2 mt-5">
-                    <Image
-                      src="/interviewer.webp"
-                      alt="interviewer"
-                      width={30}
-                      height={30}
-                      className="h-[30px] mt-1"
-                    />
-                    <div>
-                    <p
-                      style={{
-                        borderRadius: "20px 20px 20px 2px",
-                        whiteSpace: "none",
-                      }}
-                      className="bg-white h-auto p-[6px] text-black text-sm"
-                    >
-                      {`${liveQuestion} `}
-                      </p>
-                    </div>
-                  </div>
-                  )}
                   </>
                 )
                 }
@@ -123,24 +81,7 @@ const ChatBox: React.FC<chatProps> = ({ chats, liveChat, liveQuestion }) => {
                       >
                         {`${item.response} `}
                         </p>
-                        <div className="text-[10px] relative left-[1px] pt-1 pl-1 text-gray-400">
-                          {item.timeStamp
-                            ? new Date(item.timeStamp).toLocaleString("en-US", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })
-                            : "No time available"}
-
-                          {/* for setting the intnernational time zones */}
-
-                          {/* {item.timeStamp
-                            ? new Intl.DateTimeFormat("en-US", {
-                                timeZone: "Europe/London",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }).format(new Date(item.timeStamp))
-                            : "No time available"} */}
-                        </div>
+                       
                       </div>
                     </div>
                   </>
