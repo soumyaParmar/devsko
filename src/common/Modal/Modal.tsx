@@ -21,7 +21,10 @@ const Popup: React.FC<PopUpProps> = ({ open, message, onClose, type }) => {
           handleEndTest();
         }
       }, 1000);
-      return () => clearInterval(timer);
+      return () => {
+        clearInterval(timer)
+        setCounter(10);
+      };
     }
   }, [open, counter]);
 
