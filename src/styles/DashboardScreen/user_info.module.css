@@ -1,0 +1,23 @@
+.user_info {
+    @apply w-full ;
+}
+
+.gradient_space_behind {
+    @apply w-full h-[115px] mb-[44px] rounded-[12px];
+    background: linear-gradient(135deg, #FBD7FF 10%, #FFDEC1 80%);
+    position: relative;
+}
+
+.profile_image{
+    @apply w-[88px] h-[88px] bg-white rounded-full bottom-0 right-0 left-0 m-auto overflow-hidden border-4 border-white;
+    position: absolute;
+    transform: translateY(50%);
+}
+
+.name_designation{
+    @apply flex flex-col items-center p-2 gap-1 font-bold;
+}
+
+.designation_tag{
+    @apply bg-white px-2 py-0.5 rounded-full text-[#5B617A];
+}

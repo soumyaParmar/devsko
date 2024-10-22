@@ -12,6 +12,7 @@ import { FaceDetection } from "@mediapipe/face_detection";
 // import Popup from "../Modal/Modal";
 import { Camera } from "@mediapipe/camera_utils";
 import { testStartType } from "@/app/(routes)/interview/[slug]/page";
+import Icon from "@/common/VideoChatAnimationIcon/Icon";
 
 interface PassedProps {
   speechDone: boolean;
@@ -84,7 +85,8 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
 
     const camera = new Camera(videoElement, {
       onFrame: async () => {
-        if (faceDetectionRef.current) { // Ensure it's still valid
+        if (faceDetectionRef.current) {
+          // Ensure it's still valid
           await faceDetectionRef.current.send({ image: videoElement });
         }
       },
@@ -255,7 +257,8 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
 
   return (
     <>
-      {isMultipleFaceDetected && (<></>
+      {isMultipleFaceDetected && (
+        <></>
         // <Popup
         //   isVisible={isMultipleFaceDetected}
         //   message="Multiple Faces are detected"
@@ -272,9 +275,12 @@ const CandidateScreen: React.FC<PassedProps> = (props) => {
             responseTimer && testStarted == "yes" ? style.blue_border : ""
           }`}
         />
+        <span className="absolute top-3 left-[0.1rem] z-10 pl-2 pr-2 ">
+          {responseTimer && testStarted == "yes" ? <Icon/> : ""}
+        </span>
       </div>
     </>
   );
 };
 
-export default CandidateScreen;
+export default React.memo(CandidateScreen);

@@ -1,6 +1,10 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { baseUrl, constStrings } from "./constString";
 import { logout } from "./logout";
+import { Response } from "@/utils/types";
+import { AccessTokenB } from "@/models/Token";
+import { DecodedToken } from "@/utils/types/decodedtoken";
+import { accessTokenPostEP } from "./endPoints";
 
 export const getLSTokenDetails = (tokenKey: string) => {
     const token = localStorage?.getItem(tokenKey);
@@ -12,6 +16,13 @@ export const getLSTokenDetails = (tokenKey: string) => {
     return { token, expiry: tokenPayload.exp * 1000 };
 }
 
+export const getDecodedToken = (): DecodedToken => {
+    const token = localStorage?.getItem(constStrings.ACCESS_TOKEN);
+    const tokenArray = token.split(".");
+    const tokenPayload = JSON.parse(atob(tokenArray[1])) as DecodedToken;
+    return tokenPayload
+}
+
 
 export const setLSToken = (tokenKey: string, token: string | null) => {
     if (token) {
@@ -21,7 +32,7 @@ export const setLSToken = (tokenKey: string, token: string | null) => {
     }
 }
 
-export const validateToken = async () => {
+export const validateToken = async (): Promise<boolean> => {
     const { token: accessToken, expiry: endDateAccessTS } = getLSTokenDetails(constStrings.ACCESS_TOKEN);
     const { token: refreshToken, expiry: endDateRefreshTS } = getLSTokenDetails(constStrings.REFRESH_TOKEN);
 
@@ -32,21 +43,30 @@ export const validateToken = async () => {
 
         console.log({ currentDate, endDateRefresh, endDateAccess })
         if (currentDate < endDateRefresh && currentDate > endDateAccess) {
-            const res = await axios.post(`${baseUrl}/api/v1/users/token`, {}, {
-                headers: {
-                    'Issuer': `${constStrings.ISSUER}`,
-                    'Authorization': `Bearer ${refreshToken}`,
-                    'Content-Type': 'application/json',
-                }
-            })
-            if (res && res.data && res.data.data) {
-                setLSToken(constStrings.ACCESS_TOKEN, res.data.data.access_token)
-                return;
+            let res: AxiosResponse<unknown, unknown>;
+            try {
+                res = await axios.post(`${baseUrl}${accessTokenPostEP()}`, {}, {
+                    headers: {
+                        'Issuer': `${constStrings.ISSUER}`,
+                        'Authorization': `Bearer ${refreshToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                })
+            } catch (error) {
+                logout();
+                return false;
+            }
+            const responseData = res.data as Response<AccessTokenB>;
+
+            if (responseData && responseData.data) {
+                setLSToken(constStrings.ACCESS_TOKEN, responseData.data.accessToken)
+                return true;
             }
         } else if (currentDate < endDateAccess) {
-            return;
+            return true;
         }
     }
 
     logout()
+    return false;
 }

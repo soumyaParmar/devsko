@@ -64,19 +64,20 @@ const SkillsDetails = ({ formData, nextStep }) => {
 
   // Dynamically handle technology selection
   const handleSelect = (tech) => {
-    // Check if technology is already selected
     const existingTech = selectedTech.find((t) => t.technology === tech);
     if (!existingTech) {
-      // Add selected technology with the user-chosen rating and years of experience
       setSelectedTech((prev) => [
         ...prev,
-        { technology: tech, rating: currentRating, yearOfExperience: currentExperience },
+        {
+          technology: tech,
+          rating: currentRating,
+          yearOfExperience: currentExperience,
+        },
       ]);
     }
 
-    // Reset currentRating and currentExperience after adding
-    setCurrentRating(""); // Reset to initial state if needed
-    setCurrentExperience(0); // Reset to initial state if needed
+    setCurrentRating("");
+    setCurrentExperience(0);
   };
 
   const onSubmit: SubmitHandler<SkillsDetailsValues> = (data) => {
@@ -131,10 +132,7 @@ const SkillsDetails = ({ formData, nextStep }) => {
                         <p>You selected: {tech}</p>
                         <div className="flex items-center border gap-2">
                           <span className="text-center">Rate yourself:</span>
-                          <Rating
-                            register={register}
-                            name="rating"
-                          />
+                          {/* <Rating register={register} name="rating" /> */}
                         </div>
                         <div className="flex items-center gap-2">
                           <span>Year of experience: </span>

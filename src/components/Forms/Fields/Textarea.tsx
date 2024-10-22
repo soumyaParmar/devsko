@@ -1,6 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import style from "@/styles/onboardingforms.module.css";
-import { TextareaProps } from "@/utils/Interfaces/Forms/TextareaProps";
+import { UseFormRegister } from "react-hook-form";
+
+export interface TextareaProps {
+  name: string;
+  label: string;
+  width: string;
+  register: UseFormRegister<any>;
+}
 
 const Textarea: React.FC<TextareaProps> = ({
   name,

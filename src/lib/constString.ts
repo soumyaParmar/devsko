@@ -1,7 +1,9 @@
 export const constStrings = {
-    ACCESS_TOKEN: "access_token",
-    REFRESH_TOKEN: "refresh_token",
+    ACCESS_TOKEN: "accessToken",
+    REFRESH_TOKEN: "refreshToken",
     ISSUER: 'devsko'
 }
 
-export const baseUrl = "http://192.168.29.250:8000";
+export const baseUrl = "http://192.168.29.114:8080";
+//  export const baseUrl = "http://192.168.29.250:8080";
+//  export const baseUrl = "http://192.168.29.67:8000";

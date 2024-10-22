@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getLSTokenDetails, setLSToken } from "@/lib/tokenHandler";
+import { authenticateGetEP } from "@/lib/endPoints";
 
 const useAuthentication = () => {
 
@@ -12,7 +13,7 @@ const useAuthentication = () => {
 
     const getAccessToken = async (authorizationCode: string | null) => {
         try {
-            const res2 = await axios.get(`${baseUrl}/auth/v1/google/callback?code=${authorizationCode}`);
+            const res2 = await axios.get(`${baseUrl}${authenticateGetEP(authorizationCode)}`);
             return res2;
         } catch (error) {
             console.error('Error during API request:', error);
@@ -36,7 +37,7 @@ const useAuthentication = () => {
                     return;
                 }
 
-                router.replace("/dashboard/1")
+                router.replace("/useronboarding/1")
                 return;
             }
 
@@ -47,10 +48,10 @@ const useAuthentication = () => {
             if (authorizationCode) {
                 const res = await getAccessToken(authorizationCode);
                 if (res?.data) {
-                    setLSToken(constStrings.ACCESS_TOKEN, res.data.data.access_token);
-                    setLSToken(constStrings.REFRESH_TOKEN, res.data.data.refresh_token);
+                    setLSToken(constStrings.ACCESS_TOKEN, res.data.data.accessToken);
+                    setLSToken(constStrings.REFRESH_TOKEN, res.data.data.refreshToken);
 
-                    router.replace("/dashboard/1")
+                    router.replace("/useronboarding/1")
                     return;
                 }
 

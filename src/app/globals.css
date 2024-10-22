@@ -9,26 +9,34 @@ body,
   width: 100%;
 }
 
-.modalBlurBackdrop {
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  inset: 0;
-  height: 100%;
-  pointer-events: none;
-  backdrop-filter: blur(8px) !important;
-  background-color: rgba(255, 255, 255, 0.5) !important;
-  z-index: 100 !important;
+.react-tel-input {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  position: relative;
+  width: 100%
 }
 
-.modalTitle .ant-modal-title {
-  @apply border-b-2 text-[1.3rem] mb-4 text-center !important;
+.select .ant-select-selector {
+  @apply !rounded-r-none
 }
 
-.modalTitleWarning .ant-modal-title {
-  @apply text-yellow-600 border-b-2 text-[1.3rem] !important;
-}
+  /* {
+  box-sizing: border-box;
+} */
 
-.modalTitleError .ant-modal-title {
-  @apply text-red-900 !important;
+/* add the code bellow */
+@layer utilities {
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
 }

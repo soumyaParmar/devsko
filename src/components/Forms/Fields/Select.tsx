@@ -1,11 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Select, ConfigProvider } from "antd";
 import { Controller } from "react-hook-form";
 
 import "antd/es/style/reset.css";
 import style from "@/styles/onboardingforms.module.css";
-import { SelectProps } from "@/utils/Interfaces/Forms/SelectProps";
+
+type optionList = { value: string; label: number | string }[];
+
+interface SelectProps {
+  width: string;
+  // optionsList: optionList & { label: string; title: string; options: optionList }[];
+  optionsList: optionList;
+  placeholder: string;
+  label?: string;
+  showSearch?: boolean;
+  mode?: "multiple" | "tags" | undefined;
+  value: string;
+  name: string;
+  control: any;
+  rules: any;
+  allowClear?: boolean;
+  className?: string;
+  defaultValue?: string | number;
+  onSelect?: (value: number | string) => void;
+}
 
 const SelectField: React.FC<SelectProps> = ({
   width,
@@ -19,20 +39,30 @@ const SelectField: React.FC<SelectProps> = ({
   rules,
   allowClear,
   className,
-  defaultValue
+  defaultValue,
+  onSelect,
 }) => {
   return (
     <>
       <Controller
         name={name}
         control={control}
-        rules={rules}
+        rules={{
+          validate: (value) => {
+            if (value === undefined || value === null) {
+              return rules;
+            }
+            return true;
+          },
+        }}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error },
         }) => (
-          <div className={style.inputContainer} style={{ width: width }}>
-            <label>{label}</label>
+          <div className={`${style.inputContainer} ${className}`} style={{ width: width }}>
+            {label ? <label>
+              {label} {rules && <span className="text-red-500">*</span>}
+            </label> : ""}
             <ConfigProvider
               theme={{
                 components: {
@@ -41,7 +71,7 @@ const SelectField: React.FC<SelectProps> = ({
                     colorPrimary: "#000000",
                     colorPrimaryHover: "#000000",
                     lineWidth: 2,
-                    colorBorder:  "#ededed",
+                    colorBorder: "#ededed",
                     borderRadius: 8,
                   },
                 },
@@ -69,6 +99,10 @@ const SelectField: React.FC<SelectProps> = ({
                 value={value}
                 onBlur={onBlur}
                 defaultValue={defaultValue}
+                onSelect={onSelect}
+                dropdownStyle={{
+                  minWidth:'150px'
+                }}
               />
             </ConfigProvider>
             {error && <span className={style.errorMsg}>{error.message}</span>}

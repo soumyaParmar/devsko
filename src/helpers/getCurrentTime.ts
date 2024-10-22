@@ -1,4 +1,4 @@
-import { handleTimeApi } from "./timeApi";
+// import { handleTimeApi } from "./timeApi";
 
 let currentTime: { hour: string; minutes: string; suffix: string } = {
   hour: "",
@@ -7,8 +7,8 @@ let currentTime: { hour: string; minutes: string; suffix: string } = {
 };
 
 const handleGetCurrentTime = async () => {
-  const utc_time = await handleTimeApi();
-  const time = new Date(utc_time).toLocaleTimeString().split(":");
+  // const utc_time = await handleTimeApi();
+  const time = new Date().toLocaleTimeString().split(":");
   const hour = time[0];
   const minutes = time[1];
   const suffix = time[2].split(" ")[1];

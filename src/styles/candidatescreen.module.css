@@ -6,5 +6,5 @@
 }
 
 .blue_border {
-  @apply border-4 border-blue-800;
+  @apply border-4 border-blue-500;
 }

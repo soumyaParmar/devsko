@@ -37,7 +37,7 @@ const SocialDetails = ({ formData, nextStep, errorMsg }) => {
         </div>
 
         <form className={`${style.formFields} mt-3`} onSubmit={handleSubmit(onSubmit)}>
-          <div className={style.inputContainerOuter}>
+          {/* <div className={style.inputContainerOuter}>
             <Input
               name="github"
               placeholder="Enter your Github URL"
@@ -54,9 +54,9 @@ const SocialDetails = ({ formData, nextStep, errorMsg }) => {
               }}
             />
             {errors.github && errorMsg(errors.github)}
-          </div>
+          </div> */}
 
-          <div className={style.inputContainerOuter}>
+          {/* <div className={style.inputContainerOuter}>
             <Input
               name="linkedin"
               placeholder="Enter your LinkedIn URL"
@@ -73,7 +73,7 @@ const SocialDetails = ({ formData, nextStep, errorMsg }) => {
               }}
             />
             {errors.linkedin && errorMsg(errors.linkedin)}
-          </div>
+          </div> */}
 
           <div className={style.inputContainerOuter}>
             <Input
@@ -87,7 +87,7 @@ const SocialDetails = ({ formData, nextStep, errorMsg }) => {
               validationRules={{
                 validate: {
                   fileType: (value) =>
-                    value[0]?.type === "application/pdf" ||
+                    !value.length || value[0]?.type === "application/pdf" ||
                     "Only PDF files are allowed",
                 },
               }}
@@ -95,7 +95,7 @@ const SocialDetails = ({ formData, nextStep, errorMsg }) => {
             {errors.resume && errorMsg(errors.resume)}
           </div>
 
-          <div className={style.inputContainerOuter}>
+          {/* <div className={style.inputContainerOuter}>
             <Input
               name="hackerrank"
               placeholder="Enter your HackerRank URL"
@@ -112,7 +112,7 @@ const SocialDetails = ({ formData, nextStep, errorMsg }) => {
               }}
             />
             {errors.hackerrank && errorMsg(errors.hackerrank)}
-          </div>
+          </div> */}
 
           <Button btnText="Submit" />
         </form>

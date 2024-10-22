@@ -1,0 +1,46 @@
+.left{
+    @apply flex flex-col w-[20%] h-full border-r gap-3 items-center pt-3
+}
+.right{
+    @apply flex flex-col w-[80%] p-3 h-full
+}
+.left button{
+    padding: 5px 8px;
+    transition: 0.2s;
+    @apply w-4/5 rounded-xl text-left font-light;
+}
+.left button:hover{
+    padding: 5px 8px;
+    @apply bg-blue-200 w-4/5 rounded-xl text-gray-500 text-left font-light
+}
+.active_btn{
+    padding: 5px 8px;
+    @apply bg-blue-500 w-4/5 rounded-xl text-white text-left font-light
+}
+.permission_sec{
+    @apply flex justify-between border-b;
+    padding: 15px 8px
+}
+.btn{
+    @apply border-2 rounded-xl;
+    padding: 5px 20px;
+}
+.heading{
+    @apply pb-5 font-semibold text-gray-500;
+}
+.text_primary{
+    @apply pb-1 font-semibold;
+}
+.text_secondary{
+    @apply text-gray-400 text-sm font-light;
+}
+.video{
+    @apply absolute right-5
+}
+.video video {
+  @apply w-[400px] bg-black object-fill rounded-xl overflow-hidden;
+}
+.select_btn{
+    @apply border-2 rounded-xl w-[200px];
+    padding: 5px 20px;
+}

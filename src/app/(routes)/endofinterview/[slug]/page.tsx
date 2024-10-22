@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 
 const EndOfInterviewPage: React.FC = () => {
   const navigate = useRouter();
 
-  useEffect(()=>{
-    document.exitFullscreen();
-  })
+  // useEffect(()=>{
+  //   document.exitFullscreen();
+  // })
 
   const handleBacktoHome = () => {
       navigate.push("/dashboard/1");

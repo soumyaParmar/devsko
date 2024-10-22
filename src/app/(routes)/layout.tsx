@@ -1,21 +1,19 @@
-'use client';
-
-import React, { ReactNode} from 'react'
+// 'use client';
+// import useUserFetch from '@/hooks/useUserFetch';
+// import { CircularProgress } from '@mui/material';
+// import { useRouter } from 'next/navigation';
+import React, { ReactNode } from 'react'
 
 const Layout = ({ children }: Readonly<{ children: ReactNode }>) => {
-  // const [validating, setValidating] = useState(true)
+  // const router = useRouter();
+  // const { loading, data } = useUserFetch();
+  
+  // if (loading) {
+  //   return <div className="flex justify-center items-center h-screen" > <CircularProgress /></div >
+  // }
 
-  // useEffect(() => {
-  //   const validate = async () => {
-  //     setValidating(true)
-  //     await validateToken();
-  //     setValidating(false)
-  //   }
-  //   validate();
-  // }, [])
-
-  // if (validating) {
-  //   return <div className="flex justify-center items-center h-screen"><CircularProgress /></div>
+  // if (!data) {
+  //   router.push("/useronboarding/1")
   // }
 
   return (

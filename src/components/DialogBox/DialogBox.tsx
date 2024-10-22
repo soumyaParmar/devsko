@@ -20,6 +20,7 @@ interface DialogBoxType {
   handlActionBack?: () => void;
   closable?: boolean;
   buttonDisable?:boolean;
+  disableAction?:string;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -45,7 +46,8 @@ const DialogBox: React.FC<DialogBoxType> = ({
   actionBack,
   handlActionBack,
   closable = true,
-  buttonDisable = false
+  buttonDisable = false,
+  disableAction
 }) => {
   const handleClose = (
     event: React.MouseEvent,
@@ -93,7 +95,7 @@ const DialogBox: React.FC<DialogBoxType> = ({
             </Button>
           )}
           <Button onClick={handlAction} variant="contained" disabled={buttonDisable}>
-            {action}
+            {buttonDisable ? disableAction : action}
           </Button>
         </DialogActions>
       </BootstrapDialog>

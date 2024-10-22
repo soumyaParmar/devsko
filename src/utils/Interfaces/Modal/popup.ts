@@ -1,5 +1,5 @@
 export interface PopUpProps {
-    isVisible : boolean;
+    open : boolean;
     onClose: () => void;
     message : string;
     isWarning?: boolean;

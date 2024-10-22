@@ -2,6 +2,7 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 
 export const getCurrentDate = () =>{
     const date = new Date();
+    
     const day =  date.getDate();
     const month = monthNames[date.getMonth()];
     const year = date.getFullYear();

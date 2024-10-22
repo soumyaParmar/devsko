@@ -57,7 +57,7 @@
 }
 
 .blue_border {
-  @apply border-4 border-blue-800;
+  @apply border-4 border-blue-500;
 }
 
 .candidate {
@@ -119,4 +119,14 @@
 }
 .inner_avatar canvas{
   @apply !h-[180px] !w-[180px];
+}
+.inner_avatar_big{
+  @apply !h-1/2 !w-1/2
+}
+.inner_avatar_big>div>canvas{
+  @apply !h-full !w-full
+}
+.inner_avatar>div>canvas{
+  width: 172px !important;
+  height: 172px !important ;
 }

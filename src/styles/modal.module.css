@@ -2,3 +2,27 @@
     /* color: yellow !important; */
     @apply text-red-300 border-b-2;
 }
+
+.modalBlurBackdrop {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    inset: 0;
+    height: 100%;
+    pointer-events: none;
+    backdrop-filter: blur(8px) !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    z-index: 100 !important;
+  }
+  
+  .modalTitle .ant-modal-title {
+    @apply border-b-2 text-[1.3rem] mb-4 text-center !important;
+  }
+  
+  .modalTitleWarning .ant-modal-title {
+    @apply text-yellow-600 border-b-2 text-[1.3rem] !important;
+  }
+  
+  .modalTitleError .ant-modal-title {
+    @apply text-red-900 !important;
+  }

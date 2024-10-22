@@ -1,16 +1,20 @@
 import { configureStore } from '@reduxjs/toolkit'
-import tokenReducer from './features/token/tokenSlice'
+import preferredDevicesSlice from './features/preferredDevices/preferredDevicesSlice'
+import snackbarSlice from './features/snackbar/snackbarSlice'
+import UserInfoSlice from './features/userInfo/userInfoSlice'
+import DecodedTokenSlice from './features/decodedToken/decodedTokenSlice'
 
-export const createStore = () =>{
+export const createStore = () => {
   return configureStore({
     reducer: {
-      token: tokenReducer
+      preferredDevices: preferredDevicesSlice,
+      snackbar: snackbarSlice,
+      userInfo: UserInfoSlice,
+      decodedToken: DecodedTokenSlice
     },
   })
 }
 
-// Infer the type of makeStore
 export type AppStore = ReturnType<typeof createStore>
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<AppStore['getState']>
 export type AppDispatch = AppStore['dispatch']

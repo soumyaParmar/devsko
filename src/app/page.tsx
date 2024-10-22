@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 
 
 export default function Home() {
-  const router = useRouter();
   // const { handleGoogleSignIn, isAuthenticating } = useAuthentication();
+  const router =  useRouter();
+
 
   // if (isAuthenticating) {
   //   return <div className="flex justify-center items-center h-screen"><CircularProgress /></div>
@@ -22,13 +23,13 @@ export default function Home() {
           {(
             <div>
               <button
-                onClick={() => router.push('/dashboard/1')}
+                onClick={() => router.push('/useronboarding/1')}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full mb-4"
               >
                 Login with Google
               </button>
               <button
-                onClick={() => router.push('/dashboard/1')}
+                onClick={() => router.push('/useronboarding/1')}
                 className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded w-full"
               >
                 Login with GitHub

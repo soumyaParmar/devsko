@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from "react";
 import style from "@/styles/onboardingforms.module.css";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import Input from "@/components/Forms/Fields/Input";
 import Button from "@/components/Forms/Button/Button";
 import SelectField from "@/components/Forms/Fields/Select";
+import { postData, getData } from "@/lib/api";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface EducationDetailsValues {
-  highestEducationOptions: string;
-  degree: string;
+  highestEducationOptions: number;
+  degree: number;
   fieldOfStudy: string;
   university: string;
   startYear: string;
@@ -17,6 +19,12 @@ interface EducationDetailsValues {
 }
 
 const EducationDetails = ({ formData, nextStep }) => {
+  const [educationLevels, setEducationLevels] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [degreeOptions, setDegreeOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
   const {
     register,
     handleSubmit,
@@ -25,18 +33,55 @@ const EducationDetails = ({ formData, nextStep }) => {
     control,
   } = useForm<EducationDetailsValues>();
 
-  const highestEducationOptions = [
-    { value: "bachelors", label: "Bachelors (or equivalent)" },
-    { value: "doctorate", label: "Doctorate (or equivalent)" },
-    { value: "masters", label: "Masters (or equivalent)" },
-    { value: "MBA", label: "Masters (or equivalent)" },
-    { value: "highSchool", label: "Secondary / High School (or equivalent)" },
-    { value: "other", label: "Other degree" },
-  ];
+  useEffect(() => {
+    const fetchHighestEducationOptions = async () => {
+      const response = await getData("education/level");
+      if (response && response.data) {
+        const educationLevelsData = response.data.data;
+
+        const educationlevelOptions = educationLevelsData.map(
+          (educationlevelOption: any) => ({
+            label: educationlevelOption.educationlevelname,
+            value: educationlevelOption.educationlevelid,
+          })
+        );
+        setEducationLevels(educationlevelOptions);
+      }
+    };
+    fetchHighestEducationOptions();
+  }, []);
+
+  useEffect(() => {
+    if (formData.educationDetails.highestEducationOptions) {
+      const fetchDegreeOptions = async () => {
+        const response = await getData(
+          `degrees/${formData.educationDetails.highestEducationOptions}`
+        );
+        if (response && response.data) {
+          const degreeOptionsData = response.data.data;
+          const degreeOptions = degreeOptionsData.map((degreeOption: any) => ({
+            label: degreeOption.degreename,
+            value: degreeOption.degreeid,
+          }));
+          setDegreeOptions(degreeOptions);
+        }
+      };
+      fetchDegreeOptions();
+    }
+  }, [formData.educationDetails.highestEducationOptions]);
+
+  // const highestEducationOptions = [
+  //   { value: "bachelors", label: "Bachelors (or equivalent)" },
+  //   { value: "doctorate", label: "Doctorate (or equivalent)" },
+  //   { value: "masters", label: "Masters (or equivalent)" },
+  //   { value: "MBA", label: "Masters (or equivalent)" },
+  //   { value: "highSchool", label: "Secondary / High School (or equivalent)" },
+  //   { value: "other", label: "Other degree" },
+  // ];
 
   const onSubmit: SubmitHandler<EducationDetailsValues> = (data) => {
     nextStep(data);
-    console.log(data);
+    // console.log(data);
   };
   const errorMsg = (error) => {
     return <span className={style.errorMsg}>{error.message}</span>;
@@ -53,7 +98,7 @@ const EducationDetails = ({ formData, nextStep }) => {
           <SelectField
             name="highestEducationOptions"
             width="100%"
-            optionsList={highestEducationOptions}
+            optionsList={educationLevels}
             placeholder="Highest Level of Education"
             label="Highest Level of Education"
             value={
@@ -61,20 +106,24 @@ const EducationDetails = ({ formData, nextStep }) => {
             }
             control={control}
             rules={{ required: "Highest level of education is required" }}
+            defaultValue={
+              formData.educationDetails.highestEducationOptions || undefined
+            }
           />
           <div className="flex gap-2 w-full">
             <div className={style.inputContainerOuter}>
-              <Input
+              <SelectField
                 name="degree"
-                placeholder="Enter Degree"
-                type="text"
-                label="Degree"
                 width="100%"
-                className={errors.degree ? style.errorBorder : ""}
-                register={register}
-                validationRules={{ required: "Degree is required" }}
-                required
+                optionsList={degreeOptions}
+                placeholder="Enter your degree"
+                label="Enter your Degree"
+                value={formData.educationDetails.degree || undefined}
+                control={control}
+                rules={{ required: "Degree is required" }}
+                defaultValue={formData.educationDetails.degree || undefined}
               />
+
               {errors.degree && errorMsg(errors.degree)}
             </div>
 
@@ -85,6 +134,7 @@ const EducationDetails = ({ formData, nextStep }) => {
               label="Field of Study"
               width="100%"
               register={register}
+              defaultValue={formData.educationDetails.fieldOfStudy}
             />
           </div>
           <Input
@@ -94,6 +144,7 @@ const EducationDetails = ({ formData, nextStep }) => {
             label="University"
             width="100%"
             register={register}
+            defaultValue={formData.educationDetails.university}
           />
           <div className="flex gap-2 w-full">
             <div className={style.inputContainerOuter}>
@@ -105,8 +156,18 @@ const EducationDetails = ({ formData, nextStep }) => {
                 className={errors.startYear ? style.errorBorder : ""}
                 width="100%"
                 register={register}
+                defaultValue={formData.educationDetails.startYear}
                 validationRules={{
                   required: "Start year is required",
+                  pattern: {
+                    value: /^[12][0-9]{3}$/,
+                    message: "Please enter a valid 4-digit year",
+                  },
+                  validate: {
+                    isFutureYear: (value) =>
+                      value <= new Date().getFullYear() ||
+                      "Please enter a valid year",
+                  },
                 }}
                 required
               />
@@ -120,6 +181,7 @@ const EducationDetails = ({ formData, nextStep }) => {
               width="100%"
               register={register}
               required
+              defaultValue={formData.educationDetails.endYear}
             />
           </div>
           <Button btnText="Continue" />

@@ -5,7 +5,7 @@ import { useGraph } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface AvatarType {
-  text:string;
+  text:string | boolean;
   position: THREE.Vector3Tuple;
   scale:number;
 }

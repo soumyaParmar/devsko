@@ -1,0 +1,43 @@
+
+  .top {
+    @apply flex h-[80px] justify-between items-center border-b;
+    padding: 10px 25px;
+  }
+  
+  .logo {
+    @apply text-xl font-semibold w-[200px];
+  }
+  
+  .top_middle {
+    @apply flex flex-col text-center;
+  }
+  
+  .interview {
+    @apply text-lg font-medium;
+  }
+  
+  .day {
+    @apply text-xs pt-1 text-gray-400;
+  }
+  
+  .right_btns {
+    @apply flex gap-3;
+  }
+  
+  .right_btns span {
+    @apply border border-gray-300 text-gray-400 w-[100px] text-center;
+    padding: 6px 0px;
+    border-radius: 10px;
+  }
+  
+  .start_btn {
+    @apply bg-green-400 w-[100px] text-center text-white border;
+    padding: 6px 0px;
+    border-radius: 10px;
+  }
+  
+  .end_btn {
+    @apply bg-red-500 w-[100px] text-center text-white border;
+    padding: 6px 0px;
+    border-radius: 10px;
+  }
