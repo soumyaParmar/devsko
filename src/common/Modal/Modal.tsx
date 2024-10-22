@@ -13,20 +13,24 @@ const Popup: React.FC<PopUpProps> = ({ open, message, onClose, type }) => {
 
   useEffect(() => {
     if (open) {
+      setCounter(10);
       const timer = setInterval(() => {
-        setCounter((prev) => prev - 1);
-        if (counter === 0) {
-          clearInterval(timer);
-          onClose();
-          handleEndTest();
-        }
+        setCounter((prev) => {
+          if (prev === 0) {
+            clearInterval(timer);
+            onClose();
+            handleEndTest();
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
+  
       return () => {
-        clearInterval(timer)
-        setCounter(10);
+        clearInterval(timer); 
       };
     }
-  }, [open, counter]);
+  }, [open,counter]);
 
   const handleEndTest = () => {
     logEvent(
