@@ -14,7 +14,6 @@ const Popup: React.FC<PopUpProps> = ({ open, message, onClose, type }) => {
   useEffect(() => {
     if (open) {
       const timer = setInterval(() => {
-        setCounter(10)
         setCounter((prev) => {
           if (prev === 0) {
             clearInterval(timer);
@@ -30,7 +29,7 @@ const Popup: React.FC<PopUpProps> = ({ open, message, onClose, type }) => {
         clearInterval(timer);
       };
     }
-  }, [open]);
+  }, [open,counter]);
 
   const handleEndTest = () => {
     logEvent(
